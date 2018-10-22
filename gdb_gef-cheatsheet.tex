@@ -1,0 +1,120 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[bookmarks=true,colorlinks=true,linkcolor=black,citecolor=black,filecolor=black,urlcolor=black]{hyperref}
+\usepackage{multicol}
+\usepackage{geometry}
+\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm}
+\pagestyle{empty}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+\setcounter{secnumdepth}{0} % Don't print section numbers
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt plus 0.5ex}
+\begin{document}
+%\raggedright
+\footnotesize
+\begin{multicols*}{3}
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\begin{center}
+     \Large{\textbf{Reversing with GDB and GEF}} \\
+\end{center}
+
+\section{Starting GDB}
+\texttt{gdb}\textit{ program }[\textit{core}|\textit{pid}] \\
+\texttt{gdb}\textit{ gdb-options }[\texttt{-{}-args}\textit{ program args}]
+
+At startup, GDB reads the following init files and executes their commands:
+\texttt{/etc/gdb/gdbinit} and \texttt{\textasciitilde/.gdbinit}, plus \texttt{./.gdbinit},
+if \texttt{set auto-load local-gdbinit} is set to \texttt{on}.
+
+Some options are:\\
+\begin{tabular}{@{}ll@{}}
+\texttt{-q}/\texttt{-{}-quiet}/\texttt{-{}-silent} & don't print version number on startup \\
+\texttt{-h}/\texttt{-{}-help} & print help \\
+\texttt{-{}-tty=}\textit{TTY} & use \textit{TTY} for I/O by debugged program \\
+\texttt{-{}-nh} & do not read \texttt{\textasciitilde/.gdbinit} \\
+\texttt{-x}\textit{ FILE} & execute GDB commands from \textit{FILE} \\
+\texttt{-ix}\textit{ FILE} & like \texttt{-x} but execute before loading inferior \\
+\texttt{-ex}\textit{ CMD} & execute a single GDB command; may be used \\ & multiple times and in conjunction with \texttt{-x} \\
+\texttt{-iex}\textit{ CMD} & like \texttt{-ex} but before loading inferior \\
+\texttt{-s}\textit{ SYMFILE} & read symbols from \textit{SYMFILE} \\
+% \texttt{-{}-readnow} & fully read symbol files on first access \\
+% \texttt{-{}-readnever} & do not read symbol files \\
+\texttt{-{}-write} & set writing into executable and core files \\
+\end{tabular}
+
+To quit, \texttt{q}[\texttt{uit}] or \textit{Ctrl-D}.
+
+You can invoke commands on the standard shell by using:\\
+\texttt{shell}\textit{ command-string} \\
+or simply: \texttt{!}\textit{command-string}
+
+You can abbreviate a gdb command to the first few letters of the command name, if that
+abbreviation is unambiguous; and you can repeat certain gdb commands by typing just
+\textit{Return}. You can also use the \textit{TAB} key to get gdb to fill out the rest of a word in a command (or to show you the alternatives available, if there is more than one possibility).
+
+You can always ask gdb itself for information on its commands, using the command \texttt{h}[\texttt{elp}].
+
+\section{Getting information}
+\texttt{i}[\texttt{nfo}] is for describing the state of your program. For
+example, you can show the arguments passed to a function with \texttt{info args};
+you can get a complete list of the info sub-commands with \texttt{help info}.
+
+You can assign the result of an expression to an environment variable with \texttt{set}.
+For example, you can set the gdb prompt to a \$-sign with \texttt{set prompt \$}.
+
+In contrast to \texttt{info}, \texttt{show} is for describing the state of gdb itself. You can
+change most of the things you can show, by using the related command \texttt{set};
+for example, you can control what number system is used for displays with \texttt{set
+radix}, or simply inquire which is currently in use with \texttt{show radix}
+
+To display all the settable parameters and their current values, you can use
+\texttt{show} with no arguments; you may also use \texttt{info set}: both produce
+the same display.
+
+\section{Logging output}
+\begin{tabular}{@{}ll@{}}
+\texttt{set logging on} & enable logging \\
+\texttt{set logging off} & disable logging \\
+\texttt{set logging file}\textit{ file} & change the current logfile \\
+	& default logfile is \texttt{gdb.txt} \\
+\texttt{set logging overwrite [on|off]} & \\
+\texttt{set logging redirect [on|off]} & output to both terminal and logfile? \\
+\texttt{show logging} & show current logging settings
+\end{tabular}
+
+\section{Starting your program}
+page 26
+
+\rule{1.0\linewidth}{0.25pt}
+\scriptsize
+Copyright \copyright 2018 by zxgio; cheat-sheet built on \today
+
+This cheat-sheet may be freely distributed under the terms of the GNU
+General Public License; the latest version can be found at: \\
+% \url{https://github.com/zxgio/r2-cheatsheet/}
+\end{multicols*}
+\end{document}
