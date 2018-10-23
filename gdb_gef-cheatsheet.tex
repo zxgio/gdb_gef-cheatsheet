@@ -6,6 +6,7 @@
 \usepackage{geometry}
 \geometry{top=1cm,left=1cm,right=1cm,bottom=1cm}
 \pagestyle{empty}
+\usepackage{color,soul}
 
 % Redefine section commands to use less space
 \makeatletter
@@ -43,10 +44,10 @@
 \end{center}
 
 \section{Starting GDB}
-\texttt{gdb}\textit{ program }[\textit{core}|\textit{pid}] \\
-\texttt{gdb}\textit{ gdb-options }[\texttt{-{}-args}\textit{ program args}]
+\hl{\texttt{gdb}\textit{ program }[\textit{core}|\textit{pid}]} \\
+\hl{\texttt{gdb}\textit{ gdb-options }[\texttt{-{}-args}\textit{ program args}]}
 
-At startup, GDB reads the following init files and executes their commands:
+At startup, gdb reads the following init files and executes their commands:
 \texttt{/etc/gdb/gdbinit} and \texttt{\textasciitilde/.gdbinit}, plus \texttt{./.gdbinit},
 if \texttt{set auto-load local-gdbinit} is set to \texttt{on}.
 
@@ -58,7 +59,7 @@ Some options are:\\
 \texttt{-{}-nh} & do not read \texttt{\textasciitilde/.gdbinit} \\
 \texttt{-x}\textit{ FILE} & execute GDB commands from \textit{FILE} \\
 \texttt{-ix}\textit{ FILE} & like \texttt{-x} but execute before loading inferior \\
-\texttt{-ex}\textit{ CMD} & execute a single GDB command; may be used \\ & multiple times and in conjunction with \texttt{-x} \\
+\texttt{-ex}\textit{ CMD} & execute a single GDB command; may be \\ & used multiple times and with \texttt{-x} \\
 \texttt{-iex}\textit{ CMD} & like \texttt{-ex} but before loading inferior \\
 \texttt{-s}\textit{ SYMFILE} & read symbols from \textit{SYMFILE} \\
 % \texttt{-{}-readnow} & fully read symbol files on first access \\
@@ -66,48 +67,119 @@ Some options are:\\
 \texttt{-{}-write} & set writing into executable and core files \\
 \end{tabular}
 
-To quit, \texttt{q}[\texttt{uit}] or \textit{Ctrl-D}.
+To quit, \hl{\texttt{q}[\texttt{uit}]} or \textit{Ctrl-D}.
 
 You can invoke commands on the standard shell by using:\\
-\texttt{shell}\textit{ command-string} \\
-or simply: \texttt{!}\textit{command-string}
+\hl{\texttt{shell}\textit{ command-string}}
+or simply: \hl{\texttt{!}\textit{command-string}}
 
 You can abbreviate a gdb command to the first few letters of the command name, if that
 abbreviation is unambiguous; and you can repeat certain gdb commands by typing just
 \textit{Return}. You can also use the \textit{TAB} key to get gdb to fill out the rest of a word in a command (or to show you the alternatives available, if there is more than one possibility).
 
-You can always ask gdb itself for information on its commands, using the command \texttt{h}[\texttt{elp}].
+You can always ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]}.
+
+\subsection{Processes and threads}
+By default, when a program forks, gdb will continue to debug the parent process and
+the child process will run unimpeded.
+If you want to follow the child process instead of the parent process, use the command
+\hl{\texttt{set follow-fork-mode}}.
+On Linux, if you want to debug both the parent and child processes, use the command
+\hl{\texttt{set detach-on-fork}}.
+
+If you issue a run command to gdb after an \texttt{exec} call executes, the new target restarts.
+To restart the original program, use the \texttt{file} command with the parent executable name
+as its argument. By default, after an \texttt{exec} call executes, gdb discards the symbols of the
+previous executable image. You can change this behaviour with the \hl{\texttt{set follow-exec-mode}}.
+
+gdb lets you run and debug multiple programs in a single session;
+in the most general case, you can have multiple threads
+of execution in each of multiple processes, launched from multiple executables.
+See the manual for details.
 
 \section{Getting information}
-\texttt{i}[\texttt{nfo}] is for describing the state of your program. For
+\hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
 example, you can show the arguments passed to a function with \texttt{info args};
 you can get a complete list of the info sub-commands with \texttt{help info}.
 
-You can assign the result of an expression to an environment variable with \texttt{set}.
+You can assign the result of an expression to an environment variable with \hl{\texttt{set}}.
 For example, you can set the gdb prompt to a \$-sign with \texttt{set prompt \$}.
 
-In contrast to \texttt{info}, \texttt{show} is for describing the state of gdb itself. You can
-change most of the things you can show, by using the related command \texttt{set};
+\hl{\texttt{show}} is for describing the state of gdb itself. You can
+change most of things by using the related command \texttt{set};
 for example, you can control what number system is used for displays with \texttt{set
-radix}, or simply inquire which is currently in use with \texttt{show radix}
+radix}, or simply inquire which is in use with \texttt{show radix}.
 
-To display all the settable parameters and their current values, you can use
-\texttt{show} with no arguments; you may also use \texttt{info set}: both produce
-the same display.
+To display all settable parameters and their values, you can use
+\texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
 
 \section{Logging output}
-\begin{tabular}{@{}ll@{}}
-\texttt{set logging on} & enable logging \\
-\texttt{set logging off} & disable logging \\
-\texttt{set logging file}\textit{ file} & change the current logfile \\
-	& default logfile is \texttt{gdb.txt} \\
-\texttt{set logging overwrite [on|off]} & \\
-\texttt{set logging redirect [on|off]} & output to both terminal and logfile? \\
-\texttt{show logging} & show current logging settings
-\end{tabular}
+Logging can be enabled/disabled with \hl{\texttt{set logging on}/\texttt{off}}. \\
+\hl{\texttt{set logging file}\textit{ file}} changes the current logfile
+(default: \texttt{gdb.txt}).
+\hl{\texttt{show logging}} shows current logging settings; other settings are
+\texttt{logging overwrite}, and
+\texttt{logging redirect} to choose whether the output goes to both terminal and logfile.
 
 \section{Starting your program}
-page 26
+\hl{\texttt{r}[\texttt{un}] [\textit{args}]},
+\hl{\texttt{start} [\textit{args}]} and
+\hl{\texttt{starti} [\textit{args}]}
+
+\texttt{start} does the equivalent of setting a temporary breakpoint
+at the beginning of \emph{main} and invoking \texttt{run}.
+\texttt{starti} does the equivalent of setting a temporary breakpoint
+at the first instruction of a program's execution and invoking \texttt{run}.
+For programs containing an elaboration phase, \texttt{starti}
+will stop execution at the start of the elaboration phase.
+
+\textit{args} may include ``*'', or ``[...]''; they are expanded using the
+shell that will start the program (specified by the \texttt{\$SHELL} environment
+variable).  Input/output redirection with ``>'', ``<'', or ``>{}>'' are also allowed. \\
+With no arguments these commands use arguments last specified;
+to cancel previous arguments, use \hl{\texttt{set args}} without arguments.
+To start the inferior without using a shell, use \hl{\texttt{set startup-with-shell off}}.
+
+\hl{\texttt{set disable-randomization on}} (enabled by default) turns off ASLR;
+you can get the same behavior by using: \\
+\hl{\texttt{set exec-wrapper setarch `uname -m` -R}}.
+
+\subsection{Environment}
+\hl{\texttt{show environment} [\textit{varname}]}, \hl{\texttt{set environment varname} [\texttt{=}\textit{value}]} and \hl{\texttt{unset environment}\textit{ varname}}
+
+The changes are for your program (and the shell gdb uses to launch it), not for gdb itself.
+If your shell runs an initialization file when started non-interactively, it may affect your program.
+
+\hl{\texttt{set cwd }[\textit{dir}]} sets the inferior's working directory to \textit{dir},
+while \\ \hl{\texttt{cd }[\textit{dir}]} changes gdb working directory.
+
+\hl{\texttt{tty}} is an alias for \texttt{set inferior-tty}, which can be used
+to set the terminal terminal that will be used for future runs.
+
+\section{Checkpoint}
+On Linux gdb can save a snapshot of a program's state, called
+a \emph{checkpoint}, and come back to it later.
+Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved. This includes changes in memory, registers, and even
+(within some limits) system state. Effectively, it is like going back in time to the moment
+when the checkpoint was saved.
+
+\hl{\texttt{checkpoint}} saves a snapshot;
+\hl{\texttt{info checkpoints}} lists the checkpoints that have been saved,
+while
+\hl{\texttt{restart }\textit{checkpoint-id}} restores the state that was saved.
+All program variables, registers, stack frames etc. will be returned to the values
+that they had when the checkpoint was saved.
+Note that breakpoints, gdb variables, command history etc. are not affected
+by restoring a checkpoint. In general, a checkpoint only restores things that
+reside in the program being debugged, not in the debugger.
+Finally, \hl{\texttt{delete checkpoint}\textit{ checkpoint-id}} deletes the corresponding
+checkpoint.
+
+Returning to a previously saved checkpoint will restore the user state of the program
+being debugged, plus a significant subset of the system (OS) state, including file pointers. It
+won't ``un-write'' data from a file, but it will rewind the file pointer to the previous location,
+so that the previously written data can be overwritten. For files opened in read mode, the
+pointer will also be restored so that the previously read data can be read again.
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
