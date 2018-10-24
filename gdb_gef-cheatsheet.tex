@@ -181,6 +181,9 @@ won't ``un-write'' data from a file, but it will rewind the file pointer to the 
 so that the previously written data can be overwritten. For files opened in read mode, the
 pointer will also be restored so that the previously read data can be read again.
 
+\section{Breakpoints}
+\hl{\texttt{set stop-on-solib-events 1}} to stop the target when a shared library is loaded or unloaded.
+
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
 Copyright \copyright 2018 by zxgio; cheat-sheet built on \today
