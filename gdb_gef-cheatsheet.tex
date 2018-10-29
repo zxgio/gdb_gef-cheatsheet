@@ -181,8 +181,73 @@ won't ``un-write'' data from a file, but it will rewind the file pointer to the 
 so that the previously written data can be overwritten. For files opened in read mode, the
 pointer will also be restored so that the previously read data can be read again.
 
-\section{Breakpoints}
-\hl{\texttt{set stop-on-solib-events 1}} to stop the target when a shared library is loaded or unloaded.
+\section{Stop and continue}
+\begin{itemize}
+\item \emph{breakpoints} make your program stop whenever a certain point in the program is reached.  For each breakpoint, you can add conditions to control in finer detail whether your program stops.
+\hl{[\texttt{t}]\texttt{break }\textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and a given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed in the selected stack frame.
+	\begin{itemize}
+	\item {}[\texttt{t}]\texttt{hbreak} \textit{args} sets [temporary] \emph{hardware} breakpoints
+	\item \texttt{rbreak} [\textit{file}\texttt{:}]\textit{regex} set breakpoints on all functions [of \textit{file}] matching the regular expression \textit{regex}.
+	\end{itemize}
+\hl{\texttt{info break}[\texttt{points}] [\textit{list}]} prints a table of all breakpoints, watchpoints, and catchpoints (or the ones specified in \textit{list}).
+\hl{\texttt{clear} \textit{location}} and \hl{\texttt{delete} [\texttt{breakpoints}] \textit{list}} delete breakpoints.
+
+\hl{\texttt{ignore} \textit{bnum} \textit{n}} sets the ignore count of breakpoint \textit{bnum} to \textit{n} (0 to make it stop the next time breakpoint \textit{bnum} is reached).
+\item \emph{watchpoints}, AKA \emph{data breakpoints}, are special breakpoints that stop your program when the value of an expression changes.
+	\hl{\texttt{watch} [\texttt{-l}[\texttt{ocation}]] \textit{expr} [\texttt{thread} \textit{thread-id}]} sets a watchpoint for expression \textit{expr}.
+If the command includes \textit{thread-id} argument, gdb breaks only
+when the corresponding thread changes the value of expr.
+Ordinarily a watchpoint respects the scope of variables in \textit{expr}; however,
+\texttt{-location} tells gdb to instead watch the memory referred to
+by \textit{expr}.
+	\begin{itemize}
+	\item \hl{\texttt{rwatch}} sets a \emph{read} watchpoint
+	\item \hl{\texttt{awatch}} sets an \emph{access (i.e., read or write)} watchpoint
+	\item \hl{\texttt{info watchpoints [\textit{list}]}} prints a list of watchpoints
+	\end{itemize}
+\item \emph{catchpoints} stop your program when a certain kind
+of event occurs, such as the throwing of a C++ exception or the loading of a library.
+\hl{\texttt{catch} \textit{event}} stops when \textit{event} occurs; it can be:
+a C++/Ada exception event (see the manual); \texttt{exec}, \texttt{fork},
+\texttt{syscall [\textit{name} | \textit{number} | \texttt{g}[\texttt{roup}]:\textit{groupname}]},
+[\texttt{un}]\texttt{load} \textit{regexp}, \texttt{signal }[\textit{signal...} | \texttt{all}].
+Use \hl{\texttt{set stop-on-solib-events 1}} to stop the target when a shared library is loaded or unloaded.
+\item To stop when your program receives a signal, use the \hl{\texttt{handle}} command
+\end{itemize}
+A breakpoint, watchpoint, or catchpoint can have any of several different states of enablement:
+\begin{itemize}
+\item Enabled --- \hl{\texttt{enable} [\texttt{breakpoints}] [\textit{list}]}
+\item Disabled --- \hl{\texttt{disable} [\texttt{breakpoints}] [\textit{list}]}
+\item Enabled once --- \hl{\texttt{enable} [\texttt{breakpoints}] \texttt{once} [\textit{list}]}
+\item Enabled for a count --- \hl{\texttt{enable} [\texttt{breakpoints}] \texttt{count} \textit{n} [\textit{list}]}
+\item Enabled for deletion --- \hl{\texttt{enable} [\texttt{breakpoints}] \texttt{delete} [\textit{list}]}
+\end{itemize}
+\hl{\texttt{condition} \textit{bnum} [\textit{expr}]} sets or removes a condition for *point \textit{bnum}.
+
+You can give any *point a series of commands to execute
+when your program stops due to that *point; see \hl{\texttt{commands}}.
+
+\hl{\texttt{save breakpoints} \textit{filename}} saves all current *point definitions together with their commands and ignore counts, into \textit{filename}.
+To read the saved breakpoint definitions, use \hl{\texttt{source}}.
+
+\hl{\texttt{info program}} displays information about the status of your program.
+
+\section{Continuing and Stepping}
+\hl{\texttt{c} [\texttt{continue}] [\textit{ignore-count}]}
+resumes program execution; the optional argument
+\textit{ignore-count} allows you to specify a further number of times to ignore a breakpoint at this location (if the execution has stopped due to a breakpoint; otherwise the argument is ignored).
+
+To resume execution at a different place, you can use \hl{\texttt{return}} to go back to the
+calling function; or \hl{\texttt{jump}} to go to an arbitrary location.
+
+\hl{\texttt{s}[\texttt{tep}] [\textit{count}]} continue running your program until control reaches a different source line [\textit{count} times]. \hl{\texttt{n}[\texttt{ext}] [\textit{count}]} continues to the next source line in the current stack frame.
+
+\hl{\texttt{fin}[\texttt{ish}]} continues running until just after function in the selected stack frame returns.
+\hl{\texttt{u}[\texttt{ntil}]}, without arguments, continues running until a source line past the current line, in the current stack frame, is reached. It is like the next command, except that when until encounters a jump, it automatically continues execution until the program counter is greater than the address of the jump. \hl{\texttt{u}[\texttt{ntil}] \textit{location}} continue running until either the specified \textit{location} is reached, or the current stack frame returns.
+
+\hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
+
+\section{Running programs backward}
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
