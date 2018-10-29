@@ -184,7 +184,7 @@ pointer will also be restored so that the previously read data can be read again
 \section{Stop and continue}
 \begin{itemize}
 \item \emph{breakpoints} make your program stop whenever a certain point in the program is reached.  For each breakpoint, you can add conditions to control in finer detail whether your program stops.
-\hl{[\texttt{t}]\texttt{break }\textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and a given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed in the selected stack frame.
+\hl{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed in the selected stack frame.
 	\begin{itemize}
 	\item {}[\texttt{t}]\texttt{hbreak} \textit{args} sets [temporary] \emph{hardware} breakpoints
 	\item \texttt{rbreak} [\textit{file}\texttt{:}]\textit{regex} set breakpoints on all functions [of \textit{file}] matching the regular expression \textit{regex}.
