@@ -184,7 +184,7 @@ pointer will also be restored so that the previously read data can be read again
 \section{Stop and continue}
 \begin{itemize}
 \item \emph{breakpoints} make your program stop whenever a certain point in the program is reached.  For each breakpoint, you can add conditions to control in finer detail whether your program stops.
-\hl{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed in the selected stack frame.
+\hl{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed in the selected stack frame. To use an address as a location, you must prepend it with \texttt{*}; e.g. \texttt{*0x1234}.
 	\begin{itemize}
 	\item {}[\texttt{t}]\texttt{hbreak} \textit{args} sets [temporary] \emph{hardware} breakpoints
 	\item \texttt{rbreak} [\textit{file}\texttt{:}]\textit{regex} set breakpoints on all functions [of \textit{file}] matching the regular expression \textit{regex}.
@@ -247,7 +247,26 @@ calling function; or \hl{\texttt{jump}} to go to an arbitrary location.
 
 \hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
 
-\section{Running programs backward}
+\section{Record, replay and running}
+TODO
+
+\section{Examining the stack}
+One of the stack frames is selected by gdb and many commands refer implicitly to it.
+% In particular, whenever you ask gdb for the value of a variable in your program, the value is found in the selected frame.
+There are commands to select whichever frame you are interested in (\hl{\texttt{f}[\texttt{rame}] [\textit{n}|\textit{addr}]}, \hl{\texttt{up} [\textit{n}]} and \hl{\texttt{down} [\textit{n}]}).
+When your program stops, gdb automatically selects the currently executing frame and
+describes it briefly, similar to the \hl{\texttt{f}[\texttt{rame}]} command (without argument;
+for a more verbose description, \hl{\texttt{info f[\textit{rame}] [\textit{addr}]}}).
+
+\hl{\texttt{info args}} prints the arguments of the selected frame, while \hl{\texttt{info locals}}
+prints the local variables.
+
+A backtrace is a summary of how your program got where it is. It shows one line per frame,
+for many frames, starting with the currently executing frame (frame zero), followed by its
+caller (frame one), and on up the stack.
+To print a backtrace of the entire stack, use the \hl{\texttt{backtrace}} command, or its alias \hl{\texttt{bt}}.
+
+\section{Source and Machine Code}
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
