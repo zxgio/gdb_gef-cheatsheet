@@ -85,14 +85,19 @@ You can abbreviate a gdb command to the first few letters of the command name, i
 abbreviation is unambiguous; and you can repeat certain gdb commands by typing just
 \textit{Return}. You can also use the \textit{TAB} key to get gdb to fill out the rest of a word in a command (or to show you the alternatives available, if there is more than one possibility).
 
-You can always ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]},
+You can always ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]} and \gef{\texttt{gef help}},
 or use \hl{\texttt{apropos} \textit{regexp}} to search for commands matching \textit{regexp}.
+
+\gef{\texttt{tmux-setup}} checks whether GDB is being spawn from inside a tmux session, and if so, will split the pane vertically, and configure the context to be redirected to the new pane.
 
 \gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
 
 \subsection{Debugging targets}
 \hl{\texttt{target} \textit{type param}} connects to machines, processs, or files; e.g.
 \texttt{target remote | sshpass -p\textit{pw} ssh -T [\texttt{-p} \textit{port}] [\textit{user}\texttt{@}\textit{host}] gdbserver - \textit{prog} [\textit{args}]}
+
+\gef{\texttt{gef-remote}} is a wrapper for the \texttt{target remote} command,
+which includes a QEMU-mode with \texttt{-q}.
 
 \subsection{Processes and threads}
 By default, when a program forks, gdb will continue to debug the parent process and
@@ -116,6 +121,12 @@ See the manual for details.
 \hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
 example, you can show the arguments passed to a function with \texttt{info args};
 you can get a complete list of the info sub-commands with \texttt{help info}.
+
+\gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \hl{\texttt{info proc}}, with information from procfs.
+
+\gef{\texttt{vmmap}} displays the entire memory space mapping;
+\gef{\texttt{xfiles}} is a more convenient representation of the GDB native command, \hl{\texttt{info
+files}} to list the names of targets and files being debugged.
 
 You can assign the result of an expression to an environment variable with \hl{\texttt{set}}.
 For example, you can set the gdb prompt to a \$-sign with \texttt{set prompt \$}.
@@ -147,6 +158,7 @@ at the beginning of \emph{main} and invoking \texttt{run}.
 at the first instruction of a program's execution and invoking \texttt{run}.
 For programs containing an elaboration phase, \texttt{starti}
 will stop execution at the start of the elaboration phase.
+In GEF, see also \gef{\texttt{entry-break}}/\gef{\texttt{start}}.
 
 \textit{args} may include ``*'', or ``[...]''; they are expanded using the
 shell that will start the program (specified by the \texttt{\$SHELL} environment
@@ -158,6 +170,8 @@ To start the inferior without using a shell, use \hl{\texttt{set startup-with-sh
 \hl{\texttt{set disable-randomization on}} (enabled by default) turns off ASLR;
 you can get the same behavior by using: \\
 \hl{\texttt{set exec-wrapper setarch `uname -m` -R}}. In GEF, see \gef{\texttt{aslr}}.
+
+\gef{\texttt{elf}[\texttt{-info}]} provides some basic information on the currently loaded program.
 
 \subsection{Environment}
 \hl{\texttt{show environment} [\textit{varname}]}, \hl{\texttt{set environment varname} [\texttt{=}\textit{value}]} and \hl{\texttt{unset environment}\textit{ varname}}
@@ -171,14 +185,17 @@ while \\ \hl{\texttt{cd }[\textit{dir}]} changes gdb working directory.
 \hl{\texttt{tty}} is an alias for \texttt{set inferior-tty}, which can be used
 to set the terminal terminal that will be used for future runs.
 
-If the currently debugged process was compiled with the Smash Stack Protector (SSP) - i.e. the \texttt{-fstack-protector} flag was passed to the compiler, \gef{canary} will display the value of the canary. 
+If the currently debugged process was compiled with the Smash Stack Protector (SSP) - i.e. the \texttt{-fstack-protector} flag was passed to the compiler, \gef{canary} will display the value of the canary.
+
+\gef{\texttt{hijack-fd} \textit{fd-num} \textit{newfile}}
+ can be used to modify file descriptors of the debugged process.
+
+\gef{\texttt{set-permission}} facilitates the exploitation process, by changing the permission rights on a specific page directly from the debugger.
 
 \section{Checkpoint}
 On Linux gdb can save a snapshot of a program's state, called
 a \emph{checkpoint}, and come back to it later.
-Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved. This includes changes in memory, registers, and even
-(within some limits) system state. Effectively, it is like going back in time to the moment
-when the checkpoint was saved.
+Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved.
 
 \hl{\texttt{checkpoint}} saves a snapshot;
 \hl{\texttt{info checkpoints}} lists the checkpoints that have been saved,
@@ -193,10 +210,10 @@ Finally, \hl{\texttt{delete checkpoint}\textit{ checkpoint-id}} deletes the corr
 checkpoint.
 
 Returning to a previously saved checkpoint will restore the user state of the program
-being debugged, plus a significant subset of the system (OS) state, including file pointers. It
-won't ``un-write'' data from a file, but it will rewind the file pointer to the previous location,
-so that the previously written data can be overwritten. For files opened in read mode, the
-pointer will also be restored so that the previously read data can be read again.
+being debugged, plus a significant subset of the system (OS) state, including file pointers.
+% It won't ``un-write'' data from a file, but it will rewind the file pointer to the previous location,
+% so that the previously written data can be overwritten. For files opened in read mode, the
+% pointer will also be restored so that the previously read data can be read again.
 
 \section{Stop and continue}
 \begin{itemize}
@@ -210,6 +227,8 @@ pointer will also be restored so that the previously read data can be read again
 \hl{\texttt{clear} \textit{location}} and \hl{\texttt{delete} [\texttt{breakpoints}] \textit{list}} delete breakpoints.
 
 \hl{\texttt{ignore} \textit{bnum} \textit{n}} sets the ignore count of breakpoint \textit{bnum} to \textit{n} (0 to make it stop the next time breakpoint \textit{bnum} is reached).
+\item \gef{\texttt{format-string-helper}} creates a GEF specific type of breakpoints dedicated to detecting potentially insecure format string when using the GlibC library.
+\item \gef{\texttt{pie} \ldots} handles PIE breakpoints.
 \item \emph{watchpoints}, AKA \emph{data breakpoints}, are special breakpoints that stop your program when the value of an expression changes.
 	\hl{\texttt{watch} [\texttt{-l}[\texttt{ocation}]] \textit{expr} [\texttt{thread} \textit{thread-id}]} sets a watchpoint for expression \textit{expr}.
 If the command includes \textit{thread-id} argument, gdb breaks only
@@ -245,7 +264,7 @@ You can give any *point a series of commands to execute
 when your program stops due to that *point; see \hl{\texttt{commands}}.
 
 When a *point is hit, GEF displays the context (current instruction, register values, stack, \ldots) via its
-\gef{\texttt{context}} command; its layout can be configured, see 
+\gef{\texttt{context}} command; its layout can be configured, see
 \gef{\texttt{gef config context.layout}}.
 
 \hl{\texttt{save breakpoints} \textit{filename}} saves all current *point definitions together with their commands and ignore counts, into \textit{filename}.
@@ -270,6 +289,10 @@ resumes execution until the selected stack frame returns naturally.
 \hl{\texttt{u}[\texttt{ntil}]}, without arguments, continues running until a source line past the current line, in the current stack frame, is reached. It is like the next command, except that when until encounters a jump, it automatically continues execution until the program counter is greater than the address of the jump. \hl{\texttt{u}[\texttt{ntil}] \textit{location}} continue running until either the specified \textit{location} is reached, or the current stack frame returns.
 
 \hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
+
+\subsection{Emulation}
+If you have installed \emph{Unicorn} emulation engine and its Python bindings,
+\gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping (including the page permissions) for you, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
 
 \section{Record, replay and reverse execution}
 TODO
@@ -304,6 +327,10 @@ See also \gef{\texttt{capstone-disassemble}} or simply \gef{\texttt{cs}} for usi
 
 If you have installed \emph{Keystone}, then GEF can assemble native instructions directly to opcodes of the architecture you are currently debugging with \gef{\texttt{assembler}} or its alias \gef{\texttt{asm}}.
 
+\gef{\texttt{registers} [$r_1$ [$r_2$ \ldots]]} displays registers and dereference any pointers
+(in plain gdb you can see register values with \hl{\texttt{info registers}}); \gef{[\texttt{edit-}]\texttt{flags} [\{\texttt{+}|\texttt{-}|\texttt{\textasciitilde}\} \textit{flag-name} [\ldots]]}
+shows/edits the flag register.
+
 \hl{\texttt{p}[\texttt{rint}] [\texttt{/}\textit{f}] \textit{expr}} prints the
 value of expression \textit{expr}
 (in the source language). By default it's printed in a format appropriate to its data type;
@@ -326,9 +353,28 @@ The specified number of objects of the specified size are printed
 according to the format.  If a negative number is specified, memory is
 examined backward from the address.
 
+\gef{\texttt{hexdump} \{\texttt{qword}|\texttt{dword}|\texttt{word}|\texttt{byte}\} \textit{location} [\texttt{l}\textit{size}] [\texttt{up}|\texttt{down}]}
+
+\gef{\texttt{memory} \ldots} adds or removes address ranges to the memory view.
+
 The \gef{\texttt{dereference}} command (also aliased \gef{\texttt{telescope}} for PEDA former users) aims to simplify the dereferencing of an address in GDB to determine the content it actually points to.
 
+The \gef{\texttt{\$}} command attempts to mimic WinDBG \texttt{?} command;
+when provided one argument, it will evaluate the expression, and try to display the result with various formats.
+With two arguments, it will simply compute the delta between them.
+
+\gef{\texttt{heap} \ldots} is a base command to get information about the Glibc heap structure; moreover,
+\gef{\texttt{heap-analysis-helper}} aims to help the process of identifying Glibc heap inconsistencies by tracking and analyzing allocations and deallocations.
+
+\gef{\texttt{nop}} and \gef{\texttt{patch}} writes values into memory.
+
 \hl{\texttt{dump}}, \hl{\texttt{append}}, and \hl{\texttt{restore}} copy data between target memory and a file. \texttt{dump} and \texttt{append} write data to a file, whereas \texttt{restore} reads data from a file back into the inferior's memory.
+
+\gef{\texttt{print-format} / \texttt{pf}} dumps an arbitrary location as an array of bytes following the syntax of the programming language specified.
+
+\gef{\texttt{shellcode}} is a command line client for \texttt{@JonathanSalwan} shellcodes database.
+
+\gef{\texttt{stub}} allows you stub out functions, optionally specifying the return value.
 
 \subsection{Automatic display}
 If you find that you want to print the value of an expression frequently (to see how it
@@ -352,6 +398,13 @@ searching by using casts, e.g.: {char[5]}"hello".
 The address of the last match is stored as the value of \texttt{\$\_}.
 Convenience variable \texttt{\$numfound} is set to the number of matches.
 
+\gef{\texttt{search-pattern}}, alias \gef{\texttt{grep}}, allows you to search for a specific pattern at runtime in all the segments of your process memory layout.
+
+\gef{\texttt{pattern} \ldots} creates or searches a De Bruijn cyclic pattern to facilitate determining offsets in memory; the algorithm is the same as the one in \emph{pwntools}, and can therefore be used in conjunction.
+
+\gef{\texttt{scan} \textit{haystack} \textit{needle}} searches for addresses that are located in memory mapping \textit{haystack} that belonging to another, \textit{needle};
+its arguments are grepped against the processes memory mappings (just like \gef{\texttt{vmmap}} to determine the memory ranges to search).
+
 \section{Examining the Symbol Table}
 \hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
 
@@ -360,6 +413,8 @@ the name of a symbol which is stored at the address \textit{addr}. If no symbol
 is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
 This is the opposite of the \texttt{info address} command. You can use it to find out
 the name of a variable or a function given its address.
+
+\gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
