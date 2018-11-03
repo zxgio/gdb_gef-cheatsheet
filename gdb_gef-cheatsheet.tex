@@ -7,6 +7,9 @@
 \geometry{top=1cm,left=1cm,right=1cm,bottom=1cm}
 \pagestyle{empty}
 \usepackage{color,soul}
+\newcommand{\hlc}[2][yellow]{{\sethlcolor{#1} \hl{#2}}}
+\definecolor{skyblue}{RGB}{0,255,255}
+\newcommand{\gef}[1]{\hlc[skyblue]{#1}}
 
 % Redefine section commands to use less space
 \makeatletter
@@ -43,13 +46,18 @@
      \Large{\textbf{Reversing with GDB and GEF}} \\
 \end{center}
 
+Gdb commands are \hl{highlighted in yellow},
+while GEF commands are \gef{highlighted in cyan}.
+
 \section{Starting GDB}
-\hl{\texttt{gdb}\textit{ program }[\textit{core}|\textit{pid}]} \\
-\hl{\texttt{gdb}\textit{ gdb-options }[\texttt{-{}-args}\textit{ program args}]}
+\texttt{gdb}\textit{ program }[\textit{core}|\textit{pid}] \\
+\texttt{gdb}\textit{ gdb-options }[\texttt{-{}-args}\textit{ program args}]
 
 At startup, gdb reads the following init files and executes their commands:
 \texttt{/etc/gdb/gdbinit} and \texttt{\textasciitilde/.gdbinit}, plus \texttt{./.gdbinit},
 if \texttt{set auto-load local-gdbinit} is set to \texttt{on}.
+
+In addition to reading its config from \texttt{\textasciitilde/.gef.rc}, GEF can also be configured at runtime with \gef{\texttt{gef config}}.
 
 Some options are:\\
 \begin{tabular}{@{}ll@{}}
@@ -77,7 +85,14 @@ You can abbreviate a gdb command to the first few letters of the command name, i
 abbreviation is unambiguous; and you can repeat certain gdb commands by typing just
 \textit{Return}. You can also use the \textit{TAB} key to get gdb to fill out the rest of a word in a command (or to show you the alternatives available, if there is more than one possibility).
 
-You can always ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]}.
+You can always ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]},
+or use \hl{\texttt{apropos} \textit{regexp}} to search for commands matching \textit{regexp}.
+
+\gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
+
+\subsection{Debugging targets}
+\hl{\texttt{target} \textit{type param}} connects to machines, processs, or files; e.g.
+\texttt{target remote | sshpass -p\textit{pw} ssh -T [\texttt{-p} \textit{port}] [\textit{user}\texttt{@}\textit{host}] gdbserver - \textit{prog} [\textit{args}]}
 
 \subsection{Processes and threads}
 By default, when a program forks, gdb will continue to debug the parent process and
@@ -142,7 +157,7 @@ To start the inferior without using a shell, use \hl{\texttt{set startup-with-sh
 
 \hl{\texttt{set disable-randomization on}} (enabled by default) turns off ASLR;
 you can get the same behavior by using: \\
-\hl{\texttt{set exec-wrapper setarch `uname -m` -R}}.
+\hl{\texttt{set exec-wrapper setarch `uname -m` -R}}. In GEF, see \gef{\texttt{aslr}}.
 
 \subsection{Environment}
 \hl{\texttt{show environment} [\textit{varname}]}, \hl{\texttt{set environment varname} [\texttt{=}\textit{value}]} and \hl{\texttt{unset environment}\textit{ varname}}
@@ -155,6 +170,8 @@ while \\ \hl{\texttt{cd }[\textit{dir}]} changes gdb working directory.
 
 \hl{\texttt{tty}} is an alias for \texttt{set inferior-tty}, which can be used
 to set the terminal terminal that will be used for future runs.
+
+If the currently debugged process was compiled with the Smash Stack Protector (SSP) - i.e. the \texttt{-fstack-protector} flag was passed to the compiler, \gef{canary} will display the value of the canary. 
 
 \section{Checkpoint}
 On Linux gdb can save a snapshot of a program's state, called
@@ -214,7 +231,7 @@ a C++/Ada exception event (see the manual); \texttt{exec}, \texttt{fork},
 Use \hl{\texttt{set stop-on-solib-events 1}} to stop the target when a shared library is loaded or unloaded.
 \item To stop when your program receives a signal, use the \hl{\texttt{handle}} command
 \end{itemize}
-A breakpoint, watchpoint, or catchpoint can have any of several different states of enablement:
+A *point can have any of several different states of enablement:
 \begin{itemize}
 \item Enabled --- \hl{\texttt{enable} [\texttt{breakpoints}] [\textit{list}]}
 \item Disabled --- \hl{\texttt{disable} [\texttt{breakpoints}] [\textit{list}]}
@@ -227,6 +244,10 @@ A breakpoint, watchpoint, or catchpoint can have any of several different states
 You can give any *point a series of commands to execute
 when your program stops due to that *point; see \hl{\texttt{commands}}.
 
+When a *point is hit, GEF displays the context (current instruction, register values, stack, \ldots) via its
+\gef{\texttt{context}} command; its layout can be configured, see 
+\gef{\texttt{gef config context.layout}}.
+
 \hl{\texttt{save breakpoints} \textit{filename}} saves all current *point definitions together with their commands and ignore counts, into \textit{filename}.
 To read the saved breakpoint definitions, use \hl{\texttt{source}}.
 
@@ -237,8 +258,11 @@ To read the saved breakpoint definitions, use \hl{\texttt{source}}.
 resumes program execution; the optional argument
 \textit{ignore-count} allows you to specify a further number of times to ignore a breakpoint at this location (if the execution has stopped due to a breakpoint; otherwise the argument is ignored).
 
-To resume execution at a different place, you can use \hl{\texttt{return}} to go back to the
-calling function; or \hl{\texttt{jump}} to go to an arbitrary location.
+To resume execution at a different place, you can use \hl{\texttt{return} [\textit{expr}]} to go back to the
+calling function; or \hl{\texttt{j}[\texttt{ump}]} to go to an arbitrary location.
+Note that \texttt{return} does not resume execution; it leaves the program stopped in the
+state that would exist if the function had just returned. In contrast, \texttt{finish} command
+resumes execution until the selected stack frame returns naturally.
 
 \hl{\texttt{s}[\texttt{tep}] [\textit{count}]} continue running your program until control reaches a different source line [\textit{count} times]. \hl{\texttt{n}[\texttt{ext}] [\textit{count}]} continues to the next source line in the current stack frame.
 
@@ -247,7 +271,7 @@ calling function; or \hl{\texttt{jump}} to go to an arbitrary location.
 
 \hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
 
-\section{Record, replay and running}
+\section{Record, replay and reverse execution}
 TODO
 
 \section{Examining the stack}
@@ -266,7 +290,76 @@ for many frames, starting with the currently executing frame (frame zero), follo
 caller (frame one), and on up the stack.
 To print a backtrace of the entire stack, use the \hl{\texttt{backtrace}} command, or its alias \hl{\texttt{bt}}.
 
-\section{Source and Machine Code}
+\section{Code and data}
+\hl{\texttt{disassemble}}
+dumps a range of memory as machine instructions, with
+the raw instructions in hex with the \texttt{/r} modifier.
+The arguments specify a range of addresses to dump,
+in one of two forms: \textit{start}\texttt{,}\textit{end} to disassemble
+from \textit{start} (inclusive) to \textit{end} (exclusive), and
+\textit{start}\texttt{,+}\textit{length} to disassemble
+from \textit{start} (inclusive) to \textit{start+length} (exclusive).
+See also \gef{\texttt{capstone-disassemble}} or simply \gef{\texttt{cs}} for using \emph{Capstone} disassembler
+(different syntax, check the help out).
+
+If you have installed \emph{Keystone}, then GEF can assemble native instructions directly to opcodes of the architecture you are currently debugging with \gef{\texttt{assembler}} or its alias \gef{\texttt{asm}}.
+
+\hl{\texttt{p}[\texttt{rint}] [\texttt{/}\textit{f}] \textit{expr}} prints the
+value of expression \textit{expr}
+(in the source language). By default it's printed in a format appropriate to its data type;
+you can choose a different format by specifying \texttt{/}\textit{f}, where \textit{f} is one of: o(octal), x(hex), d(decimal), u(unsigned decimal), t(binary), f(float), a(address), c(char), s(string) and z(hex, zero padded on the left).
+
+An expression in the form \texttt{\{\textit{type}\}} \textit{addr}
+refers to an object of type \textit{type} stored at address \textit{addr} in memory.
+
+The \texttt{print}ed expression may include calls to functions in the program being debugged;
+use \hl{\texttt{call} \textit{addr}} to call a function without printing its return value.
+
+\hl{\texttt{x}[/\textit{fmt}] [\textit{addr}]} examines memory;
+the default for addr is usually just after the last address examined.
+\textit{fmt} is a repeat count followed by a format letter and a size letter.
+Format letters are o(octal), x(hex), d(decimal), u(unsigned decimal),
+t(binary), f(float), a(address), i(instruction), c(char), s(string)
+and z(hex, zero padded on the left).
+Size letters are b(byte), h(halfword), w(word), g(giant, 8 bytes).
+The specified number of objects of the specified size are printed
+according to the format.  If a negative number is specified, memory is
+examined backward from the address.
+
+The \gef{\texttt{dereference}} command (also aliased \gef{\texttt{telescope}} for PEDA former users) aims to simplify the dereferencing of an address in GDB to determine the content it actually points to.
+
+\hl{\texttt{dump}}, \hl{\texttt{append}}, and \hl{\texttt{restore}} copy data between target memory and a file. \texttt{dump} and \texttt{append} write data to a file, whereas \texttt{restore} reads data from a file back into the inferior's memory.
+
+\subsection{Automatic display}
+If you find that you want to print the value of an expression frequently (to see how it
+changes), you might want to add it to the automatic display list so that gdb prints its
+value each time your program stops.
+\hl{\texttt{display}[\texttt{/}\textit{fmt}] \{\textit{expr}|\textit{addr}\}}
+adds the expression/address to the list to display each time your program stops.
+
+\subsection{Search memory}
+\hl{\texttt{find} [\texttt{/}\textit{size-char}] [\texttt{/}\textit{max-count}] \textit{start-address}\texttt{,} \{\textit{end-address}|\texttt{+}\textit{length}\}, \textit{expr1} [\texttt{,} \textit{expr2 ...}]} where
+\textit{size-char} is one of b,h,w,g for 8,16,32,64 bit values respectively,
+and if not specified the size is taken from the type of the expression
+in the current language.
+
+Note that this means for example that in the case of C-like languages
+a search for an untyped 0x42 will search for "(int) 0x42"
+which is typically four bytes, and a search for a string "hello" will
+include the trailing \texttt{'\textbackslash 0'}.  The null terminator can be removed from
+searching by using casts, e.g.: {char[5]}"hello".
+
+The address of the last match is stored as the value of \texttt{\$\_}.
+Convenience variable \texttt{\$numfound} is set to the number of matches.
+
+\section{Examining the Symbol Table}
+\hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
+
+\hl{\texttt{info symbol }\textit{addr}} prints
+the name of a symbol which is stored at the address \textit{addr}. If no symbol
+is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
+This is the opposite of the \texttt{info address} command. You can use it to find out
+the name of a variable or a function given its address.
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
