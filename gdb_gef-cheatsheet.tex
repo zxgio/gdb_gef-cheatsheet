@@ -43,12 +43,12 @@
 \setlength{\columnsep}{2pt}
 
 \begin{center}
-     \Large{\textbf{Reversing with GDB and GEF}} \\
+     \Large{\textbf{Reversing with \hl{GDB} and \gef{GEF}}} \\
 \end{center}
 
-Gdb commands are \hl{highlighted in yellow},
-while GEF commands are \gef{highlighted in cyan}.
-
+% Gdb commands are \hl{highlighted in yellow},
+% while GEF commands are \gef{highlighted in cyan}.
+%
 \section{Starting GDB}
 \texttt{gdb}\textit{ program }[\textit{core}|\textit{pid}] \\
 \texttt{gdb}\textit{ gdb-options }[\texttt{-{}-args}\textit{ program args}]
@@ -56,8 +56,7 @@ while GEF commands are \gef{highlighted in cyan}.
 At startup, gdb reads the following init files and executes their commands:
 \texttt{/etc/gdb/gdbinit} and \texttt{\textasciitilde/.gdbinit}, plus \texttt{./.gdbinit},
 if \texttt{set auto-load local-gdbinit} is set to \texttt{on}.
-
-In addition to reading its config from \texttt{\textasciitilde/.gef.rc}, GEF can also be configured at runtime with \gef{\texttt{gef config}}.
+In addition to reading its config from \texttt{\textasciitilde/.gef.rc}, GEF can also be configured with \gef{\texttt{gef config}}.
 
 Some options are:\\
 \begin{tabular}{@{}ll@{}}
@@ -67,7 +66,7 @@ Some options are:\\
 \texttt{-{}-nh} & do not read \texttt{\textasciitilde/.gdbinit} \\
 \texttt{-x}\textit{ FILE} & execute GDB commands from \textit{FILE} \\
 \texttt{-ix}\textit{ FILE} & like \texttt{-x} but execute before loading inferior \\
-\texttt{-ex}\textit{ CMD} & execute a single GDB command; may be \\ & used multiple times and with \texttt{-x} \\
+\texttt{-ex}\textit{ CMD} & execute a single GDB command \\ % ; may be \\ & used multiple times and with \texttt{-x} \\
 \texttt{-iex}\textit{ CMD} & like \texttt{-ex} but before loading inferior \\
 \texttt{-s}\textit{ SYMFILE} & read symbols from \textit{SYMFILE} \\
 % \texttt{-{}-readnow} & fully read symbol files on first access \\
@@ -75,72 +74,44 @@ Some options are:\\
 \texttt{-{}-write} & set writing into executable and core files \\
 \end{tabular}
 
-To quit, \hl{\texttt{q}[\texttt{uit}]} or \textit{Ctrl-D}.
-
-You can invoke commands on the standard shell by using:\\
+To quit, \hl{\texttt{q}[\texttt{uit}]} or \textit{Ctrl-D}.  
+You can invoke commands on the standard shell by using:
 \hl{\texttt{shell}\textit{ command-string}}
 or simply: \hl{\texttt{!}\textit{command-string}}
 
-You can abbreviate a gdb command to the first few letters of the command name, if that
-abbreviation is unambiguous; and you can repeat certain gdb commands by typing just
-\textit{Return}. You can also use the \textit{TAB} key to get gdb to fill out the rest of a word in a command (or to show you the alternatives available, if there is more than one possibility).
+You can abbreviate command to the first few letters of the command name, if that
+is unambiguous; and you can repeat certain commands by typing just
+\textit{Return}. You can also use the \textit{TAB} key to fill out the rest of a word in a command (or to show you the alternatives).
 
-You can always ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]} and \gef{\texttt{gef help}},
+You can ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]} and \gef{\texttt{gef help}},
 or use \hl{\texttt{apropos} \textit{regexp}} to search for commands matching \textit{regexp}.
 
 \gef{\texttt{tmux-setup}} checks whether GDB is being spawn from inside a tmux session, and if so, will split the pane vertically, and configure the context to be redirected to the new pane.
 
-\gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
-
-\subsection{Debugging targets}
 \hl{\texttt{target} \textit{type param}} connects to machines, processs, or files; e.g.
 \texttt{target remote | sshpass -p\textit{pw} ssh -T [\texttt{-p} \textit{port}] [\textit{user}\texttt{@}\textit{host}] gdbserver - \textit{prog} [\textit{args}]}
 
 \gef{\texttt{gef-remote}} is a wrapper for the \texttt{target remote} command,
 which includes a QEMU-mode with \texttt{-q}.
 
-\subsection{Processes and threads}
-By default, when a program forks, gdb will continue to debug the parent process and
-the child process will run unimpeded.
-If you want to follow the child process instead of the parent process, use the command
-\hl{\texttt{set follow-fork-mode}}.
-On Linux, if you want to debug both the parent and child processes, use the command
+\paragraph{Processes and threads}
+By default, when a program forks, gdb will continue to debug the parent.
+If you want to follow the child, use \hl{\texttt{set follow-fork-mode}}.
+On Linux, if you want to debug both processes, use
 \hl{\texttt{set detach-on-fork}}.
 
-If you issue a run command to gdb after an \texttt{exec} call executes, the new target restarts.
-To restart the original program, use the \texttt{file} command with the parent executable name
-as its argument. By default, after an \texttt{exec} call executes, gdb discards the symbols of the
-previous executable image. You can change this behaviour with the \hl{\texttt{set follow-exec-mode}}.
+If you issue a \texttt{run} after an \texttt{exec} call executes, the new target restarts.
+To restart the original program, use \texttt{file} with the parent executable name
+as its argument. By default, after an \texttt{exec}, gdb discards the symbols of the
+previous executable image; you can change this behaviour with \hl{\texttt{set follow-exec-mode}}.
 
-gdb lets you run and debug multiple programs in a single session;
-in the most general case, you can have multiple threads
-of execution in each of multiple processes, launched from multiple executables.
-See the manual for details.
+% gdb lets you run and debug multiple programs in a single session;
+% in the most general case, you can have multiple threads
+% of execution in each of multiple processes, launched from multiple executables.
+% See the manual for details.
 
-\section{Getting information}
-\hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
-example, you can show the arguments passed to a function with \texttt{info args};
-you can get a complete list of the info sub-commands with \texttt{help info}.
-
-\gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \hl{\texttt{info proc}}, with information from procfs.
-
-\gef{\texttt{vmmap}} displays the entire memory space mapping;
-\gef{\texttt{xfiles}} is a more convenient representation of the GDB native command, \hl{\texttt{info
-files}} to list the names of targets and files being debugged.
-
-You can assign the result of an expression to an environment variable with \hl{\texttt{set}}.
-For example, you can set the gdb prompt to a \$-sign with \texttt{set prompt \$}.
-
-\hl{\texttt{show}} is for describing the state of gdb itself. You can
-change most of things by using the related command \texttt{set};
-for example, you can control what number system is used for displays with \texttt{set
-radix}, or simply inquire which is in use with \texttt{show radix}.
-
-To display all settable parameters and their values, you can use
-\texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
-
-\section{Logging output}
-Logging can be enabled/disabled with \hl{\texttt{set logging on}/\texttt{off}}. \\
+\paragraph{Logging output}
+Logging can be enabled/disabled with \hl{\texttt{set logging on}/\texttt{off}}.
 \hl{\texttt{set logging file}\textit{ file}} changes the current logfile
 (default: \texttt{gdb.txt}).
 \hl{\texttt{show logging}} shows current logging settings; other settings are
@@ -191,6 +162,44 @@ If the currently debugged process was compiled with the Smash Stack Protector (S
  can be used to modify file descriptors of the debugged process.
 
 \gef{\texttt{set-permission}} facilitates the exploitation process, by changing the permission rights on a specific page directly from the debugger.
+
+\section{Getting information}
+\hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
+example, you can show the arguments passed to a function with \hl{\texttt{info args}};
+you can get a complete list of the info sub-commands with \texttt{help info}.
+
+\gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
+
+\paragraph{Debugging targets}
+
+\hl{\texttt{info program}} displays information about the status of your program.
+
+\gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \hl{\texttt{info proc}}. %  with information from procfs.
+
+\gef{\texttt{vmmap}} displays the entire memory space mapping;
+\gef{\texttt{xfiles}} is a more convenient representation of the GDB native command, \hl{\texttt{info
+files}} to list the names of targets and files being debugged.
+
+You can assign the result of an expression to an environment variable with \hl{\texttt{set}}.
+For example, to set the prompt to a \$-sign: \texttt{set prompt \$}.
+
+\hl{\texttt{show}} is for describing the state of gdb itself. You can
+change most of things by using the related command \texttt{set};
+for example, you can control what number system is used for displays with \texttt{set
+radix}, or simply inquire which is in use with \texttt{show radix}.
+
+To display all settable parameters and their values, you can use
+\texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
+
+\hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
+
+\hl{\texttt{info symbol }\textit{addr}} prints
+the name of a symbol which is stored at the address \textit{addr}. If no symbol
+is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
+This is the opposite of the \texttt{info address} command. You can use it to find out
+the name of a variable or a function given its address.
+
+\gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
 
 \section{Checkpoint}
 On Linux gdb can save a snapshot of a program's state, called
@@ -269,8 +278,6 @@ When a *point is hit, GEF displays the context (current instruction, register va
 
 \hl{\texttt{save breakpoints} \textit{filename}} saves all current *point definitions together with their commands and ignore counts, into \textit{filename}.
 To read the saved breakpoint definitions, use \hl{\texttt{source}}.
-
-\hl{\texttt{info program}} displays information about the status of your program.
 
 \section{Continuing and Stepping}
 \hl{\texttt{c} [\texttt{continue}] [\textit{ignore-count}]}
@@ -404,17 +411,6 @@ Convenience variable \texttt{\$numfound} is set to the number of matches.
 
 \gef{\texttt{scan} \textit{haystack} \textit{needle}} searches for addresses that are located in memory mapping \textit{haystack} that belonging to another, \textit{needle};
 its arguments are grepped against the processes memory mappings (just like \gef{\texttt{vmmap}} to determine the memory ranges to search).
-
-\section{Examining the Symbol Table}
-\hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
-
-\hl{\texttt{info symbol }\textit{addr}} prints
-the name of a symbol which is stored at the address \textit{addr}. If no symbol
-is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
-This is the opposite of the \texttt{info address} command. You can use it to find out
-the name of a variable or a function given its address.
-
-\gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
