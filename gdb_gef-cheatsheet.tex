@@ -385,7 +385,18 @@ If you have installed \emph{Unicorn} emulation engine and its Python bindings,
 \gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
 
 \section{Record, replay and reverse execution}
-TODO
+\hl{\texttt{record}} starts the process record and replay target;
+\hl{\texttt{record stop}} stops.
+% When you stop in \emph{record mode} the inferior process will be left in the same state as if the recording never happened.  In \emph{replay mode}, the inferior process will become ``live'' at that earlier state, and it will then be possible to continue the usual live debugging.
+
+\hl{\texttt{record goto \{\texttt{begin}|\texttt{end}|\textit{n}\}}} goes to \{begin, end, instruction number~\textit{n} in instruction log\}.
+
+\hl{\texttt{rc} / \texttt{reverse-continue} \textit{count}} starts executing \emph{in reverse}; similarly, for \hl{\texttt{reverse-}\{\texttt{step}[\texttt{i}],\texttt{next}[\texttt{i}]\} [\textit{count}]}.
+\hl{\texttt{reverse-finish}} returns to a point where current function was called.
+
+\hl{\texttt{set exec-direction \{reverse,forward\}}}
+affects commands \texttt{step}[\texttt{i}], \texttt{next}[\texttt{i}], \texttt{continue}
+and \texttt{finish}; note \texttt{return} cannot be used in reverse.
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
