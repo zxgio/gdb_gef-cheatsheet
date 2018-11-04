@@ -296,7 +296,7 @@ shows/edits the flag register.
 \hl{\texttt{p}[\texttt{rint}] [\texttt{/}\textit{f}] \textit{expr}} prints the
 value of expression \textit{expr}
 (in the source language). By default it's printed in a format appropriate to its type;
-you can choose a different format by specifying \texttt{/}\textit{f}, where \textit{f} is one of: o(octal), x(hex), d(decimal), u(unsigned decimal), t(binary), f(float), a(address), c(char), s(string) and z(hex, zero padded on the left).
+you can choose a different format by specifying \texttt{/}\textit{f}, where \textit{f} is one of: \texttt{o}(octal), \texttt{x}(hex), \texttt{d}(decimal), \texttt{u}(unsigned decimal), \texttt{t}(binary), \texttt{f}(float), \texttt{a}(address), \texttt{c}(char), \texttt{s}(string) and \texttt{z}(hex, zero padded on the left).
 
 An expression in the form \texttt{\{\textit{type}\}}\textit{addr}
 refers to an object of type \textit{type} stored at address \textit{addr} in memory.
@@ -307,12 +307,12 @@ use \hl{\texttt{call} \textit{addr}} for calling functions without printing.
 \hl{\texttt{x}[\texttt{/}\textit{fmt}] [\textit{addr}]} examines memory;
 default \textit{addr} is usually just after the last address examined.
 \textit{fmt} is a repeat count followed by a format letter and a size letter.
-Format letters are o(octal), x(hex), d(decimal), u(unsigned decimal),
-t(binary), f(float), a(address), i(instruction), c(char), s(string)
-and z(hex, zero padded on the left).
-Size letters are b(byte), h(halfword), w(word), g(giant, 8 bytes).
+Format letters are like \texttt{print} plus \texttt{i}(instruction).
+Sizes are \texttt{b}(byte), \texttt{h}(halfword), \texttt{w}(word), \texttt{g}(giant, 8 bytes).
 If a negative number is specified, memory is examined backward. With GEF you can use
 \gef{\texttt{hexdump} \{\texttt{qword}|\texttt{dword}|\texttt{word}|\texttt{byte}\} \textit{location} [\texttt{l}\textit{size}] [\texttt{up}|\texttt{down}]}.
+
+\hl{\texttt{dprintf} \textit{location}\texttt{,}\textit{format-str}[\texttt{,}$a_1$[\texttt{,}$a_2$\ldots]]} sets a dynamic printf at specified \textit{location}.
 
 \gef{\texttt{memory} \ldots} adds or removes address ranges to the memory view.
 
@@ -346,9 +346,8 @@ adds the expression/address to such a list.
 \hl{\texttt{find} [\texttt{/}\textit{size-char}] [\texttt{/}\textit{max-count}] \textit{start-address}\texttt{,} \{\textit{end-address}|\texttt{+}\textit{length}\}, \textit{expr1} [\texttt{,} \textit{expr2 ...}]} where
 \textit{size-char} is one of b,h,w,g for 8,16,32,64 bit values respectively,
 and if not specified the size is taken from the type of the expression
-in the current language.
-
-Note that this means for example that in the case of C-like languages
+in the current language;
+in the case of C-like languages
 a search for an untyped 0x42 will search for "(int) 0x42"
 which is typically four bytes, and a search for a string "hello" will
 include the trailing \texttt{'\textbackslash 0'}.  The null terminator can be removed from
