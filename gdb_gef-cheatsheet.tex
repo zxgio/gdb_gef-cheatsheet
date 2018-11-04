@@ -77,17 +77,16 @@ Some options are:\\
 To quit, \hl{\texttt{q}[\texttt{uit}]} or \textit{Ctrl-D}.  
 You can invoke commands on the standard shell by using:
 \hl{\texttt{shell}\textit{ command-string}}
-or simply: \hl{\texttt{!}\textit{command-string}}
-
-You can abbreviate command to the first few letters of the command name, if that
-is unambiguous; and you can repeat certain commands by typing just
-\textit{Return}. You can also use the \textit{TAB} key to fill out the rest of a word in a command (or to show you the alternatives).
-
+or simply: \hl{\texttt{!}\textit{command-string}} \\
+Commands can be abbreviated,
+when unambiguous, and some commands can be repeated by typing just
+\textit{Return}. \textit{Tab} autocompletes.
 You can ask for information on commands by using \hl{\texttt{h}[\texttt{elp}]} and \gef{\texttt{gef help}},
 or use \hl{\texttt{apropos} \textit{regexp}} to search for commands matching \textit{regexp}.
 
-\gef{\texttt{tmux-setup}} checks whether GDB is being spawn from inside a tmux session, and if so, will split the pane vertically, and configure the context to be redirected to the new pane.
+When GDB is spawn from a tmux session, \gef{\texttt{tmux-setup}} splits the pane vertically, and configure the context to be redirected to the new pane.
 
+\paragraph{Debugging targets}
 \hl{\texttt{target} \textit{type param}} connects to machines, processs, or files; e.g.
 \texttt{target remote | sshpass -p\textit{pw} ssh -T [\texttt{-p} \textit{port}] [\textit{user}\texttt{@}\textit{host}] gdbserver - \textit{prog} [\textit{args}]}
 
@@ -95,15 +94,13 @@ or use \hl{\texttt{apropos} \textit{regexp}} to search for commands matching \te
 which includes a QEMU-mode with \texttt{-q}.
 
 \paragraph{Processes and threads}
-By default, when a program forks, gdb will continue to debug the parent.
-If you want to follow the child, use \hl{\texttt{set follow-fork-mode}}.
-On Linux, if you want to debug both processes, use
+When a program forks, gdb will continue to debug the parent.
+To follow the child, use \hl{\texttt{set follow-fork-mode}};
+to debug both processes, use
 \hl{\texttt{set detach-on-fork}}.
-
 If you issue a \texttt{run} after an \texttt{exec} call executes, the new target restarts.
-To restart the original program, use \texttt{file} with the parent executable name
-as its argument. By default, after an \texttt{exec}, gdb discards the symbols of the
-previous executable image; you can change this behaviour with \hl{\texttt{set follow-exec-mode}}.
+To restart the original one, use \texttt{file} with parent executable name
+as its argument. % By default, after an \texttt{exec}, gdb discards the symbols of the previous executable image; you can change this behaviour with \hl{\texttt{set follow-exec-mode}}.
 
 % gdb lets you run and debug multiple programs in a single session;
 % in the most general case, you can have multiple threads
@@ -129,7 +126,7 @@ at the beginning of \emph{main} and invoking \texttt{run}.
 at the first instruction of a program's execution and invoking \texttt{run}.
 For programs containing an elaboration phase, \texttt{starti}
 will stop execution at the start of the elaboration phase.
-In GEF, see also \gef{\texttt{entry-break}}/\gef{\texttt{start}}.
+% In GEF, see also \gef{\texttt{entry-break}}/\gef{\texttt{start}}.
 
 \textit{args} may include ``*'', or ``[...]''; they are expanded using the
 shell that will start the program (specified by the \texttt{\$SHELL} environment
@@ -139,10 +136,10 @@ to cancel previous arguments, use \hl{\texttt{set args}} without arguments.
 To start the inferior without using a shell, use \hl{\texttt{set startup-with-shell off}}.
 
 \hl{\texttt{set disable-randomization on}} (enabled by default) turns off ASLR;
-you can get the same behavior by using: \\
-\hl{\texttt{set exec-wrapper setarch `uname -m` -R}}. In GEF, see \gef{\texttt{aslr}}.
+equivalently: \hl{\texttt{set exec-wrapper setarch `uname -m` -R}}. Also, \gef{\texttt{aslr}}.
 
-\gef{\texttt{elf}[\texttt{-info}]} provides some basic information on the currently loaded program.
+\gef{\texttt{elf}[\texttt{-info}]} provides basic information on currently loaded program.
+\gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
 
 \subsection{Environment}
 \hl{\texttt{show environment} [\textit{varname}]}, \hl{\texttt{set environment varname} [\texttt{=}\textit{value}]} and \hl{\texttt{unset environment}\textit{ varname}}
@@ -156,24 +153,16 @@ while \\ \hl{\texttt{cd }[\textit{dir}]} changes gdb working directory.
 \hl{\texttt{tty}} is an alias for \texttt{set inferior-tty}, which can be used
 to set the terminal terminal that will be used for future runs.
 
-If the currently debugged process was compiled with the Smash Stack Protector (SSP) - i.e. the \texttt{-fstack-protector} flag was passed to the compiler, \gef{canary} will display the value of the canary.
-
-\gef{\texttt{hijack-fd} \textit{fd-num} \textit{newfile}}
- can be used to modify file descriptors of the debugged process.
-
-\gef{\texttt{set-permission}} facilitates the exploitation process, by changing the permission rights on a specific page directly from the debugger.
+If debugged program was compiled with \texttt{-fstack-protector}, \gef{canary} displays the value of the canary.
+\gef{\texttt{hijack-fd} \textit{fd-num} \textit{newfile}} can be used to modify file descriptors of the debugged process.
+Permission rights on specific pages can be set by using \gef{\texttt{set-permission}}.
 
 \section{Getting information}
 \hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
 example, you can show the arguments passed to a function with \hl{\texttt{info args}};
 you can get a complete list of the info sub-commands with \texttt{help info}.
 
-\gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
-
-\paragraph{Debugging targets}
-
 \hl{\texttt{info program}} displays information about the status of your program.
-
 \gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \hl{\texttt{info proc}}. %  with information from procfs.
 
 \gef{\texttt{vmmap}} displays the entire memory space mapping;
@@ -184,59 +173,54 @@ You can assign the result of an expression to an environment variable with \hl{\
 For example, to set the prompt to a \$-sign: \texttt{set prompt \$}.
 
 \hl{\texttt{show}} is for describing the state of gdb itself. You can
-change most of things by using the related command \texttt{set};
-for example, you can control what number system is used for displays with \texttt{set
-radix}, or simply inquire which is in use with \texttt{show radix}.
-
+change most of things by using \texttt{set};
+for example, you can control what number system is used with \texttt{set
+radix}, or simply inquire \texttt{show radix}.
 To display all settable parameters and their values, you can use
 \texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
 
 \hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
-
 \hl{\texttt{info symbol }\textit{addr}} prints
 the name of a symbol which is stored at the address \textit{addr}. If no symbol
 is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
-This is the opposite of the \texttt{info address} command. You can use it to find out
-the name of a variable or a function given its address.
-
+% This is the opposite of the \texttt{info address} command. You can use it to find out the name of a variable or a function given its address.
 \gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
 
 \section{Checkpoint}
-On Linux gdb can save a snapshot of a program's state, called
-a \emph{checkpoint}, and come back to it later.
-Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved.
+% On Linux gdb can save a snapshot of a program's state, called a \emph{checkpoint}, and come back to it later.  Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved.
 
 \hl{\texttt{checkpoint}} saves a snapshot;
 \hl{\texttt{info checkpoints}} lists the checkpoints that have been saved,
 while
 \hl{\texttt{restart }\textit{checkpoint-id}} restores the state that was saved.
-All program variables, registers, stack frames etc. will be returned to the values
-that they had when the checkpoint was saved.
-Note that breakpoints, gdb variables, command history etc. are not affected
-by restoring a checkpoint. In general, a checkpoint only restores things that
+% All program variables, registers, stack frames etc. will be returned to the values
+% that they had when the checkpoint was saved.
+% Note that breakpoints, gdb variables, command history etc. are not affected
+% by restoring a checkpoint. In general,
+A checkpoint only restores things that
 reside in the program being debugged, not in the debugger.
 Finally, \hl{\texttt{delete checkpoint}\textit{ checkpoint-id}} deletes the corresponding
 checkpoint.
 
-Returning to a previously saved checkpoint will restore the user state of the program
-being debugged, plus a significant subset of the system (OS) state, including file pointers.
+Returning to a checkpoint restores the user state of the program
+being debugged, and a subset of the OS state including file pointers.
 % It won't ``un-write'' data from a file, but it will rewind the file pointer to the previous location,
 % so that the previously written data can be overwritten. For files opened in read mode, the
 % pointer will also be restored so that the previously read data can be read again.
 
 \section{Stop and continue}
 \begin{itemize}
-\item \emph{breakpoints} make your program stop whenever a certain point in the program is reached.  For each breakpoint, you can add conditions to control in finer detail whether your program stops.
-\hl{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed in the selected stack frame. To use an address as a location, you must prepend it with \texttt{*}; e.g. \texttt{*0x1234}.
+\item \emph{breakpoints} make your program stop whenever a certain point in the program is reached; you can add conditions to control whether your program stops.
+\hl{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed. To use an address as a location, you must prepend it with \texttt{*}; e.g. \texttt{*0x1234}.
 	\begin{itemize}
-	\item {}[\texttt{t}]\texttt{hbreak} \textit{args} sets [temporary] \emph{hardware} breakpoints
-	\item \texttt{rbreak} [\textit{file}\texttt{:}]\textit{regex} set breakpoints on all functions [of \textit{file}] matching the regular expression \textit{regex}.
+	\item \hl{[\texttt{t}]\texttt{hbreak} \textit{args}} sets [temporary] \emph{hardware} breakpoints
+	\item \hl{\texttt{rbreak} [\textit{file}\texttt{:}]\textit{regex}} set breakpoints on all functions [of \textit{file}] matching the regular expression \textit{regex}.
 	\end{itemize}
-\hl{\texttt{info break}[\texttt{points}] [\textit{list}]} prints a table of all breakpoints, watchpoints, and catchpoints (or the ones specified in \textit{list}).
+\hl{\texttt{info break}[\texttt{points}] [\textit{list}]} prints all breakpoints, watchpoints, and catchpoints (or the ones specified in \textit{list}).
 \hl{\texttt{clear} \textit{location}} and \hl{\texttt{delete} [\texttt{breakpoints}] \textit{list}} delete breakpoints.
 
 \hl{\texttt{ignore} \textit{bnum} \textit{n}} sets the ignore count of breakpoint \textit{bnum} to \textit{n} (0 to make it stop the next time breakpoint \textit{bnum} is reached).
-\item \gef{\texttt{format-string-helper}} creates a GEF specific type of breakpoints dedicated to detecting potentially insecure format string when using the GlibC library.
+\item \gef{\texttt{format-string-helper}} creates a specific type of breakpoints dedicated to detecting potentially insecure format strings. %  when using the GlibC library.
 \item \gef{\texttt{pie} \ldots} handles PIE breakpoints.
 \item \emph{watchpoints}, AKA \emph{data breakpoints}, are special breakpoints that stop your program when the value of an expression changes.
 	\hl{\texttt{watch} [\texttt{-l}[\texttt{ocation}]] \textit{expr} [\texttt{thread} \textit{thread-id}]} sets a watchpoint for expression \textit{expr}.
@@ -251,74 +235,67 @@ by \textit{expr}.
 	\item \hl{\texttt{info watchpoints [\textit{list}]}} prints a list of watchpoints
 	\end{itemize}
 \item \emph{catchpoints} stop your program when a certain kind
-of event occurs, such as the throwing of a C++ exception or the loading of a library.
+of event occurs, such as throwing a C++ exception or loading a library.
 \hl{\texttt{catch} \textit{event}} stops when \textit{event} occurs; it can be:
-a C++/Ada exception event (see the manual); \texttt{exec}, \texttt{fork},
+an exception event;
 \texttt{syscall [\textit{name} | \textit{number} | \texttt{g}[\texttt{roup}]:\textit{groupname}]},
+\texttt{exec}, \texttt{fork},
 [\texttt{un}]\texttt{load} \textit{regexp}, \texttt{signal }[\textit{signal...} | \texttt{all}].
 Use \hl{\texttt{set stop-on-solib-events 1}} to stop the target when a shared library is loaded or unloaded.
-\item To stop when your program receives a signal, use the \hl{\texttt{handle}} command
+\item To stop when your program receives a signal, use \hl{\texttt{handle}}
 \end{itemize}
 A *point can have any of several different states of enablement:
 \begin{itemize}
-\item Enabled --- \hl{\texttt{enable} [\texttt{breakpoints}] [\textit{list}]}
-\item Disabled --- \hl{\texttt{disable} [\texttt{breakpoints}] [\textit{list}]}
+\item Enabled/Disabled--- \hl{\{\texttt{enable}|\texttt{disable}\} [\texttt{breakpoints}] [\textit{list}]}
 \item Enabled once --- \hl{\texttt{enable} [\texttt{breakpoints}] \texttt{once} [\textit{list}]}
 \item Enabled for a count --- \hl{\texttt{enable} [\texttt{breakpoints}] \texttt{count} \textit{n} [\textit{list}]}
 \item Enabled for deletion --- \hl{\texttt{enable} [\texttt{breakpoints}] \texttt{delete} [\textit{list}]}
 \end{itemize}
 \hl{\texttt{condition} \textit{bnum} [\textit{expr}]} sets or removes a condition for *point \textit{bnum}.
 
-You can give any *point a series of commands to execute
-when your program stops due to that *point; see \hl{\texttt{commands}}.
-
-When a *point is hit, GEF displays the context (current instruction, register values, stack, \ldots) via its
-\gef{\texttt{context}} command; its layout can be configured, see
+When a *point is hit, GEF displays the context (current instruction, registers, stack, \ldots) via its
+\gef{\texttt{context}} command; to configure its layout see
 \gef{\texttt{gef config context.layout}}.
+Any *point can execute a series of commands when hit; see \hl{\texttt{commands}}.
 
 \hl{\texttt{save breakpoints} \textit{filename}} saves all current *point definitions together with their commands and ignore counts, into \textit{filename}.
 To read the saved breakpoint definitions, use \hl{\texttt{source}}.
 
 \section{Continuing and Stepping}
-\hl{\texttt{c} [\texttt{continue}] [\textit{ignore-count}]}
+\hl{\texttt{c}[\texttt{ontinue}] [\textit{ignore-count}]}
 resumes program execution; the optional argument
-\textit{ignore-count} allows you to specify a further number of times to ignore a breakpoint at this location (if the execution has stopped due to a breakpoint; otherwise the argument is ignored).
+\textit{ignore-count} allows you to specify a further number of times to ignore a breakpoint at this location. % (if the execution has stopped due to a breakpoint; otherwise the argument is ignored).
 
-To resume execution at a different place, you can use \hl{\texttt{return} [\textit{expr}]} to go back to the
+To resume execution at a different place, use \hl{\texttt{return} [\textit{expr}]} to go back to the
 calling function; or \hl{\texttt{j}[\texttt{ump}]} to go to an arbitrary location.
-Note that \texttt{return} does not resume execution; it leaves the program stopped in the
-state that would exist if the function had just returned. In contrast, \texttt{finish} command
-resumes execution until the selected stack frame returns naturally.
+Note that \texttt{return} does not resume execution: it leaves the program stopped in the
+state that would exist if the function had just returned. In contrast,
+\hl{\texttt{fin}[\texttt{ish}]} continues running until just after function in the selected stack frame returns.
+\hl{\texttt{u}[\texttt{ntil}]}, without arguments, continues running until a source line past the current line is reached. It is like \texttt{next}, except that when \texttt{until} encounters a jump, it automatically continues execution until the program counter is greater than the address of the jump. \hl{\texttt{u}[\texttt{ntil}] \textit{location}} continue running until either the specified \textit{location} is reached, or the current stack frame returns.
 
 \hl{\texttt{s}[\texttt{tep}] [\textit{count}]} continue running your program until control reaches a different source line [\textit{count} times]. \hl{\texttt{n}[\texttt{ext}] [\textit{count}]} continues to the next source line in the current stack frame.
-
-\hl{\texttt{fin}[\texttt{ish}]} continues running until just after function in the selected stack frame returns.
-\hl{\texttt{u}[\texttt{ntil}]}, without arguments, continues running until a source line past the current line, in the current stack frame, is reached. It is like the next command, except that when until encounters a jump, it automatically continues execution until the program counter is greater than the address of the jump. \hl{\texttt{u}[\texttt{ntil}] \textit{location}} continue running until either the specified \textit{location} is reached, or the current stack frame returns.
-
 \hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
 
 \subsection{Emulation}
 If you have installed \emph{Unicorn} emulation engine and its Python bindings,
-\gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping (including the page permissions) for you, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
+\gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
 
 \section{Record, replay and reverse execution}
 TODO
 
 \section{Examining the stack}
-One of the stack frames is selected by gdb and many commands refer implicitly to it.
-% In particular, whenever you ask gdb for the value of a variable in your program, the value is found in the selected frame.
+One of the stack frames is selected and many commands refer implicitly to it.
 There are commands to select whichever frame you are interested in (\hl{\texttt{f}[\texttt{rame}] [\textit{n}|\textit{addr}]}, \hl{\texttt{up} [\textit{n}]} and \hl{\texttt{down} [\textit{n}]}).
-When your program stops, gdb automatically selects the currently executing frame and
-describes it briefly, similar to the \hl{\texttt{f}[\texttt{rame}]} command (without argument;
-for a more verbose description, \hl{\texttt{info f[\textit{rame}] [\textit{addr}]}}).
+When your program stops, gdb automatically selects the currently executing frame and describes it briefly, similar to the \hl{\texttt{f}[\texttt{rame}]} command (without argument;
+for a more verbose description, \hl{\texttt{info f[\textit{rame}] [\textit{addr}]}}). \\
+\hl{\texttt{info args}} prints the arguments of selected frame, while \hl{\texttt{info locals}}
+the local variables.
 
-\hl{\texttt{info args}} prints the arguments of the selected frame, while \hl{\texttt{info locals}}
-prints the local variables.
-
-A backtrace is a summary of how your program got where it is. It shows one line per frame,
-for many frames, starting with the currently executing frame (frame zero), followed by its
-caller (frame one), and on up the stack.
-To print a backtrace of the entire stack, use the \hl{\texttt{backtrace}} command, or its alias \hl{\texttt{bt}}.
+A backtrace is a summary of how your program got where it is.
+% It shows one line per frame,
+% for many frames, starting with the currently executing frame (frame zero), followed by its
+% caller (frame one), and on up the stack.
+To print a backtrace of the entire stack, use \hl{\texttt{bt} / \texttt{backtrace}}.
 
 \section{Code and data}
 \hl{\texttt{disassemble}}
@@ -329,10 +306,9 @@ in one of two forms: \textit{start}\texttt{,}\textit{end} to disassemble
 from \textit{start} (inclusive) to \textit{end} (exclusive), and
 \textit{start}\texttt{,+}\textit{length} to disassemble
 from \textit{start} (inclusive) to \textit{start+length} (exclusive).
-See also \gef{\texttt{capstone-disassemble}} or simply \gef{\texttt{cs}} for using \emph{Capstone} disassembler
-(different syntax, check the help out).
+See \gef{\texttt{cs} / \texttt{capstone-disassemble}} (note: different args) for using \emph{Capstone}.
 
-If you have installed \emph{Keystone}, then GEF can assemble native instructions directly to opcodes of the architecture you are currently debugging with \gef{\texttt{assembler}} or its alias \gef{\texttt{asm}}.
+If you have \emph{Keystone}, then GEF can assemble native instructions directly with \gef{\texttt{asm} / \texttt{assembler}}.
 
 \gef{\texttt{registers} [$r_1$ [$r_2$ \ldots]]} displays registers and dereference any pointers
 (in plain gdb you can see register values with \hl{\texttt{info registers}}); \gef{[\texttt{edit-}]\texttt{flags} [\{\texttt{+}|\texttt{-}|\texttt{\textasciitilde}\} \textit{flag-name} [\ldots]]}
@@ -340,35 +316,32 @@ shows/edits the flag register.
 
 \hl{\texttt{p}[\texttt{rint}] [\texttt{/}\textit{f}] \textit{expr}} prints the
 value of expression \textit{expr}
-(in the source language). By default it's printed in a format appropriate to its data type;
+(in the source language). By default it's printed in a format appropriate to its type;
 you can choose a different format by specifying \texttt{/}\textit{f}, where \textit{f} is one of: o(octal), x(hex), d(decimal), u(unsigned decimal), t(binary), f(float), a(address), c(char), s(string) and z(hex, zero padded on the left).
 
-An expression in the form \texttt{\{\textit{type}\}} \textit{addr}
+An expression in the form \texttt{\{\textit{type}\}}\textit{addr}
 refers to an object of type \textit{type} stored at address \textit{addr} in memory.
 
-The \texttt{print}ed expression may include calls to functions in the program being debugged;
-use \hl{\texttt{call} \textit{addr}} to call a function without printing its return value.
+\texttt{print}ed expressions may include function calls in the program being debugged;
+use \hl{\texttt{call} \textit{addr}} for calling functions without printing.
 
-\hl{\texttt{x}[/\textit{fmt}] [\textit{addr}]} examines memory;
-the default for addr is usually just after the last address examined.
+\hl{\texttt{x}[\texttt{/}\textit{fmt}] [\textit{addr}]} examines memory;
+default \textit{addr} is usually just after the last address examined.
 \textit{fmt} is a repeat count followed by a format letter and a size letter.
 Format letters are o(octal), x(hex), d(decimal), u(unsigned decimal),
 t(binary), f(float), a(address), i(instruction), c(char), s(string)
 and z(hex, zero padded on the left).
 Size letters are b(byte), h(halfword), w(word), g(giant, 8 bytes).
-The specified number of objects of the specified size are printed
-according to the format.  If a negative number is specified, memory is
-examined backward from the address.
-
-\gef{\texttt{hexdump} \{\texttt{qword}|\texttt{dword}|\texttt{word}|\texttt{byte}\} \textit{location} [\texttt{l}\textit{size}] [\texttt{up}|\texttt{down}]}
+If a negative number is specified, memory is examined backward. With GEF you can use
+\gef{\texttt{hexdump} \{\texttt{qword}|\texttt{dword}|\texttt{word}|\texttt{byte}\} \textit{location} [\texttt{l}\textit{size}] [\texttt{up}|\texttt{down}]}.
 
 \gef{\texttt{memory} \ldots} adds or removes address ranges to the memory view.
 
-The \gef{\texttt{dereference}} command (also aliased \gef{\texttt{telescope}} for PEDA former users) aims to simplify the dereferencing of an address in GDB to determine the content it actually points to.
+\gef{\texttt{dereference} / \texttt{telescope}} simplifies the dereferencing of an address in GDB to determine the content it actually points to.
 
-The \gef{\texttt{\$}} command attempts to mimic WinDBG \texttt{?} command;
-when provided one argument, it will evaluate the expression, and try to display the result with various formats.
-With two arguments, it will simply compute the delta between them.
+The \gef{\texttt{\$}} command mimics WinDBG \texttt{?} command:
+when provided one argument, it evaluates the expression and displays the result in various formats.
+With two arguments, the delta between them.
 
 \gef{\texttt{heap} \ldots} is a base command to get information about the Glibc heap structure; moreover,
 \gef{\texttt{heap-analysis-helper}} aims to help the process of identifying Glibc heap inconsistencies by tracking and analyzing allocations and deallocations.
@@ -379,16 +352,16 @@ With two arguments, it will simply compute the delta between them.
 
 \gef{\texttt{print-format} / \texttt{pf}} dumps an arbitrary location as an array of bytes following the syntax of the programming language specified.
 
-\gef{\texttt{shellcode}} is a command line client for \texttt{@JonathanSalwan} shellcodes database.
+\gef{\texttt{shellcode}} is a client for \texttt{@JonathanSalwan} shellcodes database.
 
-\gef{\texttt{stub}} allows you stub out functions, optionally specifying the return value.
+\gef{\texttt{stub}} stubs out functions, optionally specifying the return value.
 
 \subsection{Automatic display}
-If you find that you want to print the value of an expression frequently (to see how it
-changes), you might want to add it to the automatic display list so that gdb prints its
-value each time your program stops.
+If you find that you want to print the value of an expression frequently 
+you might want to add it to the automatic display list so that gdb prints its
+value each time your program stops. \\
 \hl{\texttt{display}[\texttt{/}\textit{fmt}] \{\textit{expr}|\textit{addr}\}}
-adds the expression/address to the list to display each time your program stops.
+adds the expression/address to such a list.
 
 \subsection{Search memory}
 \hl{\texttt{find} [\texttt{/}\textit{size-char}] [\texttt{/}\textit{max-count}] \textit{start-address}\texttt{,} \{\textit{end-address}|\texttt{+}\textit{length}\}, \textit{expr1} [\texttt{,} \textit{expr2 ...}]} where
