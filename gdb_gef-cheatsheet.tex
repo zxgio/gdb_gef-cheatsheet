@@ -74,7 +74,7 @@ Some options are:\\
 \texttt{-{}-write} & set writing into executable and core files \\
 \end{tabular}
 
-To quit, \hl{\texttt{q}[\texttt{uit}]} or \textit{Ctrl-D}.  
+To quit, \hl{\texttt{q}[\texttt{uit}]} or \textit{Ctrl-D}.
 You can invoke commands on the standard shell by using:
 \hl{\texttt{shell}\textit{ command-string}}
 or simply: \hl{\texttt{!}\textit{command-string}} \\
@@ -157,58 +157,7 @@ If debugged program was compiled with \texttt{-fstack-protector}, \gef{canary} d
 \gef{\texttt{hijack-fd} \textit{fd-num} \textit{newfile}} can be used to modify file descriptors of the debugged process.
 Permission rights on specific pages can be set by using \gef{\texttt{set-permission}}.
 
-\section{Getting information}
-\hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
-example, you can show the arguments passed to a function with \hl{\texttt{info args}};
-you can get a complete list of the info sub-commands with \texttt{help info}.
-
-\hl{\texttt{info program}} displays information about the status of your program.
-\gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \hl{\texttt{info proc}}. %  with information from procfs.
-
-\gef{\texttt{vmmap}} displays the entire memory space mapping;
-\gef{\texttt{xfiles}} is a more convenient representation of the GDB native command, \hl{\texttt{info
-files}} to list the names of targets and files being debugged.
-
-You can assign the result of an expression to an environment variable with \hl{\texttt{set}}.
-For example, to set the prompt to a \$-sign: \texttt{set prompt \$}.
-
-\hl{\texttt{show}} is for describing the state of gdb itself. You can
-change most of things by using \texttt{set};
-for example, you can control what number system is used with \texttt{set
-radix}, or simply inquire \texttt{show radix}.
-To display all settable parameters and their values, you can use
-\texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
-
-\hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
-\hl{\texttt{info symbol }\textit{addr}} prints
-the name of a symbol which is stored at the address \textit{addr}. If no symbol
-is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
-% This is the opposite of the \texttt{info address} command. You can use it to find out the name of a variable or a function given its address.
-\gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
-
-\section{Checkpoint}
-% On Linux gdb can save a snapshot of a program's state, called a \emph{checkpoint}, and come back to it later.  Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved.
-
-\hl{\texttt{checkpoint}} saves a snapshot;
-\hl{\texttt{info checkpoints}} lists the checkpoints that have been saved,
-while
-\hl{\texttt{restart }\textit{checkpoint-id}} restores the state that was saved.
-% All program variables, registers, stack frames etc. will be returned to the values
-% that they had when the checkpoint was saved.
-% Note that breakpoints, gdb variables, command history etc. are not affected
-% by restoring a checkpoint. In general,
-A checkpoint only restores things that
-reside in the program being debugged, not in the debugger.
-Finally, \hl{\texttt{delete checkpoint}\textit{ checkpoint-id}} deletes the corresponding
-checkpoint.
-
-Returning to a checkpoint restores the user state of the program
-being debugged, and a subset of the OS state including file pointers.
-% It won't ``un-write'' data from a file, but it will rewind the file pointer to the previous location,
-% so that the previously written data can be overwritten. For files opened in read mode, the
-% pointer will also be restored so that the previously read data can be read again.
-
-\section{Stop and continue}
+\section{Stopping execution}
 \begin{itemize}
 \item \emph{breakpoints} make your program stop whenever a certain point in the program is reached; you can add conditions to control whether your program stops.
 \hl{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \hl{\texttt{break}} sets a breakpoint at the next instruction to be executed. To use an address as a location, you must prepend it with \texttt{*}; e.g. \texttt{*0x1234}.
@@ -261,29 +210,58 @@ Any *point can execute a series of commands when hit; see \hl{\texttt{commands}}
 \hl{\texttt{save breakpoints} \textit{filename}} saves all current *point definitions together with their commands and ignore counts, into \textit{filename}.
 To read the saved breakpoint definitions, use \hl{\texttt{source}}.
 
-\section{Continuing and Stepping}
-\hl{\texttt{c}[\texttt{ontinue}] [\textit{ignore-count}]}
-resumes program execution; the optional argument
-\textit{ignore-count} allows you to specify a further number of times to ignore a breakpoint at this location. % (if the execution has stopped due to a breakpoint; otherwise the argument is ignored).
+\subsection{Checkpoints}
+% On Linux gdb can save a snapshot of a program's state, called a \emph{checkpoint}, and come back to it later.  Returning to a checkpoint effectively undoes everything that has happened in the program since the checkpoint was saved.
 
-To resume execution at a different place, use \hl{\texttt{return} [\textit{expr}]} to go back to the
-calling function; or \hl{\texttt{j}[\texttt{ump}]} to go to an arbitrary location.
-Note that \texttt{return} does not resume execution: it leaves the program stopped in the
-state that would exist if the function had just returned. In contrast,
-\hl{\texttt{fin}[\texttt{ish}]} continues running until just after function in the selected stack frame returns.
-\hl{\texttt{u}[\texttt{ntil}]}, without arguments, continues running until a source line past the current line is reached. It is like \texttt{next}, except that when \texttt{until} encounters a jump, it automatically continues execution until the program counter is greater than the address of the jump. \hl{\texttt{u}[\texttt{ntil}] \textit{location}} continue running until either the specified \textit{location} is reached, or the current stack frame returns.
+\hl{\texttt{checkpoint}} saves a snapshot;
+\hl{\texttt{info checkpoints}} lists the checkpoints that have been saved,
+while
+\hl{\texttt{restart }\textit{checkpoint-id}} restores the state that was saved.
+% All program variables, registers, stack frames etc. will be returned to the values
+% that they had when the checkpoint was saved.
+% Note that breakpoints, gdb variables, command history etc. are not affected
+% by restoring a checkpoint. In general,
+A checkpoint only restores things that
+reside in the program being debugged, not in the debugger.
+Finally, \hl{\texttt{delete checkpoint}\textit{ checkpoint-id}} deletes the corresponding
+checkpoint.
 
-\hl{\texttt{s}[\texttt{tep}] [\textit{count}]} continue running your program until control reaches a different source line [\textit{count} times]. \hl{\texttt{n}[\texttt{ext}] [\textit{count}]} continues to the next source line in the current stack frame.
-\hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
+Returning to a checkpoint restores the user state of the program
+being debugged, and a subset of the OS state including file pointers.
+% It won't ``un-write'' data from a file, but it will rewind the file pointer to the previous location,
+% so that the previously written data can be overwritten. For files opened in read mode, the
+% pointer will also be restored so that the previously read data can be read again.
 
-\subsection{Emulation}
-If you have installed \emph{Unicorn} emulation engine and its Python bindings,
-\gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
+\section{Getting information}
+\hl{\texttt{i}[\texttt{nfo}]} is for describing the state of your program. For
+example, you can show the arguments passed to a function with \hl{\texttt{info args}};
+you can get a complete list of the info sub-commands with \texttt{help info}.
 
-\section{Record, replay and reverse execution}
-TODO
+\hl{\texttt{info program}} displays information about the status of your program.
+\gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \hl{\texttt{info proc}}. %  with information from procfs.
 
-\section{Examining the stack}
+\gef{\texttt{vmmap}} displays the entire memory space mapping;
+\gef{\texttt{xfiles}} is a more convenient representation of the GDB native command, \hl{\texttt{info
+files}} to list the names of targets and files being debugged.
+
+You can assign the result of an expression to an environment variable with \hl{\texttt{set}}.
+For example, to set the prompt to a \$-sign: \texttt{set prompt \$}.
+
+\hl{\texttt{show}} is for describing the state of gdb itself. You can
+change most of things by using \texttt{set};
+for example, you can control what number system is used with \texttt{set
+radix}, or simply inquire \texttt{show radix}.
+To display all settable parameters and their values, you can use
+\texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
+
+\hl{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
+\hl{\texttt{info symbol }\textit{addr}} prints
+the name of a symbol which is stored at the address \textit{addr}. If no symbol
+is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
+% This is the opposite of the \texttt{info address} command. You can use it to find out the name of a variable or a function given its address.
+\gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
+
+\subsection{Examining the stack}
 One of the stack frames is selected and many commands refer implicitly to it.
 There are commands to select whichever frame you are interested in (\hl{\texttt{f}[\texttt{rame}] [\textit{n}|\textit{addr}]}, \hl{\texttt{up} [\textit{n}]} and \hl{\texttt{down} [\textit{n}]}).
 When your program stops, gdb automatically selects the currently executing frame and describes it briefly, similar to the \hl{\texttt{f}[\texttt{rame}]} command (without argument;
@@ -297,7 +275,7 @@ A backtrace is a summary of how your program got where it is.
 % caller (frame one), and on up the stack.
 To print a backtrace of the entire stack, use \hl{\texttt{bt} / \texttt{backtrace}}.
 
-\section{Code and data}
+\subsection{Examining code}
 \hl{\texttt{disassemble}}
 dumps a range of memory as machine instructions, with
 the raw instructions in hex with the \texttt{/r} modifier.
@@ -310,6 +288,7 @@ See \gef{\texttt{cs} / \texttt{capstone-disassemble}} (note: different args) for
 
 If you have \emph{Keystone}, then GEF can assemble native instructions directly with \gef{\texttt{asm} / \texttt{assembler}}.
 
+\subsection{Examining data}
 \gef{\texttt{registers} [$r_1$ [$r_2$ \ldots]]} displays registers and dereference any pointers
 (in plain gdb you can see register values with \hl{\texttt{info registers}}); \gef{[\texttt{edit-}]\texttt{flags} [\{\texttt{+}|\texttt{-}|\texttt{\textasciitilde}\} \textit{flag-name} [\ldots]]}
 shows/edits the flag register.
@@ -356,14 +335,14 @@ With two arguments, the delta between them.
 
 \gef{\texttt{stub}} stubs out functions, optionally specifying the return value.
 
-\subsection{Automatic display}
-If you find that you want to print the value of an expression frequently 
+\paragraph{Automatic display}
+If you find that you want to print the value of an expression frequently
 you might want to add it to the automatic display list so that gdb prints its
 value each time your program stops. \\
 \hl{\texttt{display}[\texttt{/}\textit{fmt}] \{\textit{expr}|\textit{addr}\}}
 adds the expression/address to such a list.
 
-\subsection{Search memory}
+\subsection{Searching in memory}
 \hl{\texttt{find} [\texttt{/}\textit{size-char}] [\texttt{/}\textit{max-count}] \textit{start-address}\texttt{,} \{\textit{end-address}|\texttt{+}\textit{length}\}, \textit{expr1} [\texttt{,} \textit{expr2 ...}]} where
 \textit{size-char} is one of b,h,w,g for 8,16,32,64 bit values respectively,
 and if not specified the size is taken from the type of the expression
@@ -384,6 +363,29 @@ Convenience variable \texttt{\$numfound} is set to the number of matches.
 
 \gef{\texttt{scan} \textit{haystack} \textit{needle}} searches for addresses that are located in memory mapping \textit{haystack} that belonging to another, \textit{needle};
 its arguments are grepped against the processes memory mappings (just like \gef{\texttt{vmmap}} to determine the memory ranges to search).
+
+\section{Resuming execution}
+\hl{\texttt{c}[\texttt{ontinue}] [\textit{ignore-count}]}
+resumes program execution; the optional argument
+\textit{ignore-count} allows you to specify a further number of times to ignore a breakpoint at this location. % (if the execution has stopped due to a breakpoint; otherwise the argument is ignored).
+
+To resume execution at a different place, use \hl{\texttt{return} [\textit{expr}]} to go back to the
+calling function; or \hl{\texttt{j}[\texttt{ump}]} to go to an arbitrary location.
+Note that \texttt{return} does not resume execution: it leaves the program stopped in the
+state that would exist if the function had just returned. In contrast,
+\hl{\texttt{fin}[\texttt{ish}]} continues running until just after function in the selected stack frame returns.
+\hl{\texttt{u}[\texttt{ntil}]}, without arguments, continues running until a source line past the current line is reached. It is like \texttt{next}, except that when \texttt{until} encounters a jump, it automatically continues execution until the program counter is greater than the address of the jump. \hl{\texttt{u}[\texttt{ntil}] \textit{location}} continue running until either the specified \textit{location} is reached, or the current stack frame returns.
+
+\subsection{Stepping}
+\hl{\texttt{s}[\texttt{tep}] [\textit{count}]} continue running your program until control reaches a different source line [\textit{count} times]. \hl{\texttt{n}[\texttt{ext}] [\textit{count}]} continues to the next source line in the current stack frame.
+\hl{\texttt{stepi}/\texttt{si} \textit{count}} and \hl{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
+
+\subsection{Emulation}
+If you have installed \emph{Unicorn} emulation engine and its Python bindings,
+\gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
+
+\section{Record, replay and reverse execution}
+TODO
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
