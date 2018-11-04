@@ -361,7 +361,7 @@ Convenience variable \texttt{\$numfound} is set to the number of matches.
 \gef{\texttt{pattern} \ldots} creates or searches a De Bruijn cyclic pattern to facilitate determining offsets in memory; the algorithm is the same as the one in \emph{pwntools}, and can therefore be used in conjunction.
 
 \gef{\texttt{scan} \textit{haystack} \textit{needle}} searches for addresses that are located in memory mapping \textit{haystack} that belonging to another, \textit{needle};
-its arguments are grepped against the processes memory mappings (just like \gef{\texttt{vmmap}} to determine the memory ranges to search).
+its arguments are grepped against the processes memory mappings (just like \texttt{vmmap} to determine the memory ranges to search).
 
 \section{Resuming execution}
 \hl{\texttt{c}[\texttt{ontinue}] [\textit{ignore-count}]}
