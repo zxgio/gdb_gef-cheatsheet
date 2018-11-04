@@ -273,7 +273,7 @@ A backtrace is a summary of how your program got where it is.
 % It shows one line per frame,
 % for many frames, starting with the currently executing frame (frame zero), followed by its
 % caller (frame one), and on up the stack.
-To print a backtrace of the entire stack, use \hl{\texttt{bt} / \texttt{backtrace}}.
+To print a backtrace of the entire stack, use \hl{\texttt{bt} / \texttt{backtrace} [\texttt{full}]}; for dumping the stacks of all threads: \hl{\texttt{thread apply bt} [\texttt{full}]}.
 
 \subsection{Examining code}
 \hl{\texttt{disassemble}}
