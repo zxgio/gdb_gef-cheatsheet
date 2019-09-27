@@ -241,6 +241,7 @@ you can get a complete list of the info sub-commands with \texttt{help info}.
 
 \gdb{\texttt{info program}} displays information about the status of your program.
 \gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \gdb{\texttt{info proc}}. %  with information from procfs.
+\gef{got} displays the status of the GOT inside the process.
 
 \gef{\texttt{vmmap}} displays the entire memory space mapping;
 \gef{\texttt{xfiles}} is a more convenient representation of the GDB native command, \gdb{\texttt{info
@@ -251,10 +252,10 @@ For example, to set the prompt to a \$-sign: \texttt{set prompt \$}.
 
 \gdb{\texttt{show}} is for describing the state of gdb itself. You can
 change most of things by using \texttt{set};
-for example, you can control what number system is used with \texttt{set
-radix}, or simply inquire \texttt{show radix}.
+for example, what number system is used with \texttt{set
+radix}, or inquire it with \texttt{show radix}.
 To display all settable parameters and their values, you can use
-\texttt{show} with no arguments; you may also use \texttt{info set}: both print the same.
+\texttt{show} with no arguments. % ; you may also use \texttt{info set}: both print the same.
 
 \gdb{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
 \gdb{\texttt{info symbol }\textit{addr}} prints
