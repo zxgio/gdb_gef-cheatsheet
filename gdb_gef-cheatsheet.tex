@@ -101,7 +101,7 @@ To follow the child, use \gdb{\texttt{set follow-fork-mode}};
 to debug both processes, use
 \gdb{\texttt{set detach-on-fork}}.
 If you issue a \texttt{run} after an \texttt{exec} call executes, the new target restarts.
-To restart the original one, use \texttt{file} with parent executable name
+To restart the original one, use \gdb{\texttt{file}} with parent executable name
 as its argument. % By default, after an \texttt{exec}, gdb discards the symbols of the previous executable image; you can change this behaviour with \gdb{\texttt{set follow-exec-mode}}.
 
 % gdb lets you run and debug multiple programs in a single session;
@@ -257,12 +257,13 @@ radix}, or inquire it with \texttt{show radix}.
 To display all settable parameters and their values, you can use
 \texttt{show} with no arguments. % ; you may also use \texttt{info set}: both print the same.
 
-\gdb{\texttt{info address} \textit{symbol}} describe where the data for \textit{symbol} is stored.
+\gdb{\texttt{info address} \textit{symbol}} shows where data for \textit{symbol} is stored.
 \gdb{\texttt{info symbol }\textit{addr}} prints
-the name of a symbol which is stored at the address \textit{addr}. If no symbol
+the name of a symbol stored at the address \textit{addr}. If no symbol
 is stored exactly at \textit{addr}, gdb prints the nearest symbol and an offset from it.
 % This is the opposite of the \texttt{info address} command. You can use it to find out the name of a variable or a function given its address.
-\gef{\texttt{xinfo}} displays all the information known to gef about the specific address given as argument.
+\gef{\texttt{xinfo}} displays all information about a specific address.
+\gdb{\texttt{symbol-file}} loads different symbol tables.
 
 \subsection{Examining the stack}
 One of the stack frames is selected and many commands refer implicitly to it.
