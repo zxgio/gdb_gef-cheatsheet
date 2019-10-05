@@ -104,7 +104,7 @@ If you issue a \texttt{run} after an \texttt{exec} call executes, the new target
 To restart the original one, use \gdb{\texttt{file}} with parent executable name as its argument.
 
 \gdb{\texttt{info threads}} lists current threads, \gdb{\texttt{thread} \textit{id}} selects the current one and \gdb{\texttt{thread name} \textit{name}} gives a name.
-In (default) all-stop mode, whenever your program stops, all threads stop. Conversely, whenever you restart the program, all threads start executing, \emph{even when single-stepping}. Set \texttt{set scheduler-locking} to \texttt{on} or \texttt{step} to avoid this. To enable non-stop mode, use \gdb{\texttt{set pagination off}} and \gdb{\texttt{set non-stop on}}, \emph{before} starting/connecting-to a target.
+In (default) all-stop mode, whenever your program stops, all threads stop. Conversely, whenever you restart the program, all threads start executing, \emph{even when single-stepping}. Set \texttt{scheduler-locking} to \texttt{on} or \texttt{step} to avoid this. To enable non-stop mode, use \gdb{\texttt{set pagination off}} and \gdb{\texttt{set non-stop on}}, \emph{before} starting/connecting-to a target.
 
 \paragraph{Logging output}
 Logging can be enabled/disabled with \gdb{\texttt{set logging on}/\texttt{off}}.
