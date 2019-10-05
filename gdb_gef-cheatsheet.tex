@@ -101,13 +101,10 @@ To follow the child, use \gdb{\texttt{set follow-fork-mode}};
 to debug both processes, use
 \gdb{\texttt{set detach-on-fork}}.
 If you issue a \texttt{run} after an \texttt{exec} call executes, the new target restarts.
-To restart the original one, use \gdb{\texttt{file}} with parent executable name
-as its argument. % By default, after an \texttt{exec}, gdb discards the symbols of the previous executable image; you can change this behaviour with \gdb{\texttt{set follow-exec-mode}}.
+To restart the original one, use \gdb{\texttt{file}} with parent executable name as its argument.
 
-% gdb lets you run and debug multiple programs in a single session;
-% in the most general case, you can have multiple threads
-% of execution in each of multiple processes, launched from multiple executables.
-% See the manual for details.
+\gdb{\texttt{info threads}} lists current threads, \gdb{\texttt{thread} \textit{id}} selects the current one and \gdb{\texttt{thread name} \textit{name}} gives a name.
+In (default) all-stop mode, whenever your program stops, all threads stop. Conversely, whenever you restart the program, all threads start executing, \emph{even when single-stepping}. Set \texttt{set scheduler-locking} to \texttt{on} or \texttt{step} to avoid this. To enable non-stop mode, use \gdb{\texttt{set pagination off}} and \gdb{\texttt{set non-stop on}}, \emph{before} starting/connecting-to a target.
 
 \paragraph{Logging output}
 Logging can be enabled/disabled with \gdb{\texttt{set logging on}/\texttt{off}}.
@@ -162,7 +159,7 @@ Permission rights on specific pages can be set by using \gef{\texttt{set-permiss
 \section{Stopping execution}
 \begin{itemize}
 \item \emph{breakpoints} make your program stop whenever a certain point in the program is reached; you can add conditions to control whether your program stops.
-\gdb{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \gdb{\texttt{break}} sets a breakpoint at the next instruction to be executed. To use an address as a location, you must prepend it with \texttt{*}; e.g. \texttt{*0x1234}.
+\gdb{[\texttt{t}]\texttt{b}[\texttt{reak}] \textit{location} [\texttt{thread} \textit{id}] [\texttt{if} \textit{condition}]} sets a [temporary] breakpoint at the given \textit{location} [, and given \textit{condition}]. When called without any arguments, \gdb{\texttt{break}} sets a breakpoint at the next instruction to be executed. To use an address as a location, you must prepend it with \texttt{*}; e.g. \texttt{*0x1234}.
 	\begin{itemize}
 	\item \gdb{[\texttt{t}]\texttt{hbreak} \textit{args}} sets [temporary] \emph{hardware} breakpoints
 	\item \gdb{\texttt{rbreak} [\textit{file}\texttt{:}]\textit{regex}} set breakpoints on all functions [of \textit{file}] matching the regular expression \textit{regex}.
