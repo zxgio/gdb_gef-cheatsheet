@@ -314,7 +314,7 @@ Sizes are \texttt{b}(byte), \texttt{h}(halfword), \texttt{w}(word), \texttt{g}(g
 If a negative number is specified, memory is examined backward. With GEF you can use
 \gef{\texttt{hexdump} \{\texttt{qword}|\texttt{dword}|\texttt{word}|\texttt{byte}\} \textit{location} [\texttt{l}\textit{size}] [\texttt{up}|\texttt{down}]}.
 
-\gdb{\texttt{dprintf} \textit{location}\texttt{,}\textit{format-str}[\texttt{,}$a_1$[\texttt{,}$a_2$\ldots]]} sets a dynamic printf at specified \textit{location}.
+\gdb{\texttt{dprintf} \textit{location}\texttt{,}\textit{format-str}[\texttt{,}$a_1$[\texttt{,}$a_2$\ldots]]} sets a dynamic printf at specified \textit{location}; this is actually a dprintf-breakpoint and you can use \gdb{\texttt{cond}} to add a condition, for instance.
 
 \gef{\texttt{memory} \ldots} adds or removes address ranges to the memory view.
 
