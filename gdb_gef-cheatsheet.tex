@@ -99,7 +99,7 @@ which includes a QEMU-mode with \texttt{-q}.
 When a program forks, gdb will continue to debug the parent.
 To follow the child, use \gdb{\texttt{set follow-fork-mode}};
 to debug both processes, use
-\gdb{\texttt{set detach-on-fork}}.
+\gdb{\texttt{set detach-on-fork off}}. Then, you can list the inferiors with \gdb{\texttt{info inferiors}} and switch among them with \gdb{\texttt{inferior} \textit{id}}.
 If you issue a \texttt{run} after an \texttt{exec} call executes, the new target restarts.
 To restart the original one, use \gdb{\texttt{file}} with parent executable name as its argument.
 
