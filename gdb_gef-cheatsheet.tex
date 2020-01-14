@@ -299,8 +299,8 @@ value of expression \textit{expr}
 (in the source language). By default it's printed in a format appropriate to its type;
 you can choose a different format by specifying \texttt{/}\textit{f}, where \textit{f} is one of: \texttt{o}(octal), \texttt{x}(hex), \texttt{d}(decimal), \texttt{u}(unsigned decimal), \texttt{t}(binary), \texttt{f}(float), \texttt{a}(address), \texttt{c}(char), \texttt{s}(string) and \texttt{z}(hex, zero padded on the left).
 
-\gdb{\texttt{ptype} \textit{expr}} prints the type of \textit{expr}.
-An expression of the form \texttt{\{\textit{t}\}}\textit{addr} refers to an object of type \textit{t}, stored at address \textit{addr} in memory.
+\gdb{\texttt{ptype} [\texttt{/o}] \textit{expr}} prints the type of \textit{expr} [with field offsets/sizes].
+The expression \texttt{\{\textit{t}\}}\textit{addr} refers to an object of type \textit{t}, stored at  \textit{addr}.
 
 \texttt{print}ed expressions may include function calls in the program being debugged;
 use \gdb{\texttt{call} \textit{addr}} for calling functions without printing.
