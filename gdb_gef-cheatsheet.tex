@@ -123,15 +123,13 @@ Logging can be enabled/disabled with \gdb{\texttt{set logging on}/\texttt{off}}.
 
 \texttt{start} does the equivalent of setting a temporary breakpoint
 at the beginning of \emph{main} and invoking \texttt{run}.
-\texttt{starti} does the equivalent of setting a temporary breakpoint
-at the first instruction of a program's execution and invoking \texttt{run}.
-For programs containing an elaboration phase, \texttt{starti}
-will stop execution at the start of the elaboration phase.
+\texttt{starti} sets a temporary bp at the first instruction and invokes \texttt{run}.
+For programs containing an elaboration phase, \texttt{starti} stops execution at the start of such a phase.
 % In GEF, see also \gef{\texttt{entry-break}}/\gef{\texttt{start}}.
 
 \textit{args} may include ``*'', or ``[...]''; they are expanded using the
 shell that will start the program (specified by the \texttt{\$SHELL} environment
-variable).  Input/output redirection with ``>'', ``<'', or ``>{}>'' are also allowed. \\
+variable).  Input/output redirection with ``\texttt{>}'', ``\texttt{<}'', or ``\texttt{>{}>}'' are also allowed. \\
 With no arguments these commands use arguments last specified;
 to cancel previous arguments, use \gdb{\texttt{set args}} without arguments.
 To start the inferior without using a shell, use \gdb{\texttt{set startup-with-shell off}}.
@@ -142,11 +140,13 @@ equivalently: \gdb{\texttt{set exec-wrapper setarch `uname -m` -R}}. Also, \gef{
 \gef{\texttt{elf}[\texttt{-info}]} provides basic information on currently loaded program.
 \gef{\texttt{checksec}}, inspired from \texttt{checksec.sh}, provides a convenient way to determine which security protections are enabled in a binary.
 
+Signal handling/delivering: \gdb{\texttt{info signals}} and \gdb{\texttt{handle} \textit{signal action}}.
+
 \subsection{Environment}
 \gdb{\texttt{show environment} [\textit{varname}]}, \gdb{\texttt{set environment varname} [\texttt{=}\textit{value}]} and \gdb{\texttt{unset environment}\textit{ varname}}
 
 The changes are for your program (and the shell gdb uses to launch it), not for gdb itself.
-If your shell runs an initialization file when started non-interactively, it may affect your program.
+% If your shell runs an initialization file when started non-interactively, it may affect your program.
 
 \gdb{\texttt{set cwd }[\textit{dir}]} sets the inferior's working directory to \textit{dir},
 while \\ \gdb{\texttt{cd }[\textit{dir}]} changes gdb working directory.
