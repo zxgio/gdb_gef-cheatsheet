@@ -242,7 +242,7 @@ you can get a complete list of the info sub-commands with \texttt{help info}.
 \gef{\texttt{process-status}} provides an exhaustive description of the current running process, by extending the information provided by \gdb{\texttt{info proc}}. %  with information from procfs.
 \gef{got} displays the status of the GOT inside the process.
 
-\gef{\texttt{vmmap}} displays the entire memory space mapping ($\!\!$\gdb{\texttt{info shared}} just the status of shared libraries); \gef{\texttt{xfiles}} is a more convenient representation of \gdb{\texttt{info files}} to list the targets and files being debugged.
+\gef{\texttt{vmmap} [\textit{filter}]} displays the entire memory space mapping ($\!\!$\gdb{\texttt{info shared}} just the status of shared libraries); \gef{\texttt{xfiles}} is a more convenient representation of \gdb{\texttt{info files}} to list the targets and files being debugged.
 
 You can assign the result of an expression to an environment variable with \gdb{\texttt{set}}.
 For example, to set the prompt to a \$-sign: \texttt{set prompt \$}.
