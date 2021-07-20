@@ -381,8 +381,9 @@ state that would exist if the function had just returned. In contrast,
 \gdb{\texttt{stepi}/\texttt{si} \textit{count}} and \gdb{\texttt{nexti}/\texttt{ni} \textit{count}} work on machine instructions, instead of source lines.
 
 \subsection{Emulation}
-If you have installed \emph{Unicorn} emulation engine and its Python bindings,
-\gef{\texttt{unicorn-emulate} / \texttt{emu}} replicates the current memory mapping, and by default (i.e. without any additional argument), it will emulate the execution of the instruction about to be executed (i.e. the one pointed by \texttt{\$pc}) and display which register(s) is(are) tainted by it.
+If you have installed \emph{Unicorn} and its Python bindings,
+\gef{\texttt{unicorn-emulate}} / \gef{\texttt{emu}} replicates the current memory mapping, and by default, emulates the instruction about to be executed, displaying which registers are tainted by it.
+Option \texttt{-o} specifies to generate a Python script, embedding your current execution context, ready to be re-used.
 
 \section{Record, replay and reverse execution}
 \gdb{\texttt{record}} starts the process record and replay target;
