@@ -294,7 +294,7 @@ If you have \emph{Keystone}, then GEF can assemble native instructions directly 
 (in plain gdb you can see register values with \gdb{\texttt{info registers}}); \gef{[\texttt{edit-}]\texttt{flags} [\{\texttt{+}|\texttt{-}|\texttt{\textasciitilde}\} \textit{flag-name} [\ldots]]}
 shows/edits the flag register.
 
-\gdb{\texttt{p}[\texttt{rint}] [\texttt{/}\textit{f}] \textit{expr}} prints the
+\gdb{\texttt{print}] [\texttt{/}\textit{f}] \textit{expr}} prints the
 value of expression \textit{expr}
 (in the source language). By default it's printed in a format appropriate to its type;
 you can choose a different format by specifying \texttt{/}\textit{f}, where \textit{f} is one of: \texttt{o}(octal), \texttt{x}(hex), \texttt{d}(decimal), \texttt{u}(unsigned decimal), \texttt{t}(binary), \texttt{f}(float), \texttt{a}(address), \texttt{c}(char), \texttt{s}(string) and \texttt{z}(hex, zero padded on the left).
@@ -401,7 +401,7 @@ and \texttt{finish}; note \texttt{return} cannot be used in reverse.
 
 \rule{1.0\linewidth}{0.25pt}
 \scriptsize
-Copyright \copyright 2018--2019 by zxgio; cheat-sheet built on \today
+Copyright \copyright 2018--\the\year{} by zxgio; cheat-sheet built on \today
 
 This cheat-sheet may be freely distributed under the terms of the GNU
 General Public License; the latest version can be found at: \\
